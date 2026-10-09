@@ -8,7 +8,7 @@ Aplicação de teste técnico que simula um pequeno domínio de investimentos em
 - **Mercado ao vivo** — cotações simuladas transmitidas por SSE, com variação do dia, mini gráfico e boleta de compra/venda com **trava de preço de 8 s**.
 - **Carteiras** — cadastro, depósitos e detalhe com posições reprecificadas a cada tick (custo médio).
 - **Extrato** — depósitos, compras e vendas com filtros, ordenação e paginação no servidor.
-- **Home de documentação** — estas páginas.
+- **Documentação** — estas páginas, no menu Documentação (a tela inicial é o Dashboard).
 - **Catálogo** — cadastro das ações negociáveis (ticker, nome, setor, preço).
 
 ## Peças

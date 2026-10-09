@@ -25,7 +25,7 @@ const ROTULO_TIPO = { DEPOSITO: 'Depósito', COMPRA: 'Compra', VENDA: 'Venda' } 
       <label>Carteira
         <select [value]="f.carteiraId ?? ''" (change)="alterar({ carteiraId: numero($any($event.target).value) })">
           <option value="">Todas</option>
-          @for (c of carteiras(); track c.id) { <option [value]="c.id">{{ c.nome }}</option> }
+          @for (c of carteiras(); track c.id) { <option [value]="c.id" [selected]="c.id === f.carteiraId">{{ c.nome }}</option> }
         </select>
       </label>
       <label>Tipo

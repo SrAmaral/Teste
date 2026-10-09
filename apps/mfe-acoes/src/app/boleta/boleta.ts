@@ -28,7 +28,7 @@ const TTL_MS = 8000;
 
     <label class="campo">Carteira
       <select [value]="carteiraId() ?? ''" (change)="trocarCarteira($any($event.target).value)">
-        @for (c of carteiras(); track c.id) { <option [value]="c.id">{{ c.nome }} · {{ c.saldo | currency }}</option> }
+        @for (c of carteiras(); track c.id) { <option [value]="c.id" [selected]="c.id === carteiraId()">{{ c.nome }} · {{ c.saldo | currency }}</option> }
       </select>
     </label>
 
@@ -120,16 +120,20 @@ export class Boleta {
   readonly posicoes = signal<Posicao[]>([]);
   readonly quantidade = signal(1);
   readonly trava = signal<Trava | null>(null);
+  /** Expiração medida no relógio do navegador a partir do recebimento (imune a diferença de relógio com o servidor). */
+  private readonly expiraLocal = signal(0);
   readonly enviando = signal(false);
   readonly aviso = signal<string | null>(null);
   readonly ultima = signal<OrdemExecutada | null>(null);
   private readonly agora = signal(Date.now());
 
+  /** Só o id importa: ticks trazem um objeto novo da mesma ação e não devem renovar a trava. */
+  private readonly acaoId = computed(() => this.acao().acaoId);
   readonly carteira = computed(() => this.carteiras().find((c) => c.id === this.carteiraId()) ?? null);
   readonly posicao = computed(() => this.posicoes().find((p) => p.acaoId === this.acao().acaoId) ?? null);
   readonly restanteMs = computed(() => {
     const t = this.trava();
-    return t ? Math.max(0, Date.parse(t.expiraEm) - this.agora()) : 0;
+    return t ? Math.max(0, this.expiraLocal() - this.agora()) : 0;
   });
   readonly expirada = computed(() => !this.trava() || this.restanteMs() === 0);
   readonly segundosRestantes = computed(() => Math.ceil(this.restanteMs() / 1000));
@@ -152,7 +156,7 @@ export class Boleta {
     });
     // Troca de ação → nova trava (a trava não depende da carteira).
     effect(() => {
-      const acaoId = this.acao().acaoId;
+      const acaoId = this.acaoId();
       untracked(() => {
         this.ultima.set(null);
         this.travar(acaoId);
@@ -230,6 +234,7 @@ export class Boleta {
       next: (t) => {
         this.trava.set(t);
         this.agora.set(Date.now());
+        this.expiraLocal.set(Date.now() + TTL_MS);
       },
       error: () => this.trava.set(null),
     });

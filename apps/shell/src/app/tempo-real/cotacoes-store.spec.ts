@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { Cotacao } from '@safra/shared';
 import { CotacoesStore, FABRICA_EVENT_SOURCE } from './cotacoes-store';
@@ -8,14 +9,22 @@ const cot = (acaoId: number, ticker: string, preco: number): Cotacao => ({
 });
 
 describe('CotacoesStore', () => {
+  let fontes: FonteFalsa[];
   let fonte: FonteFalsa;
   let store: CotacoesStore;
 
   beforeEach(() => {
-    fonte = new FonteFalsa();
-    TestBed.configureTestingModule({ providers: [CotacoesStore, { provide: FABRICA_EVENT_SOURCE, useValue: () => fonte }] });
+    fontes = [];
+    const fabrica = () => {
+      fonte = new FonteFalsa();
+      fontes.push(fonte);
+      return fonte;
+    };
+    TestBed.configureTestingModule({ providers: [CotacoesStore, { provide: FABRICA_EVENT_SOURCE, useValue: fabrica }] });
     store = TestBed.inject(CotacoesStore);
   });
+
+  afterEach(() => vi.useRealTimers());
 
   it('começa conectando e fica ao vivo no snapshot', () => {
     expect(store.status()).toBe('conectando');
@@ -43,5 +52,19 @@ describe('CotacoesStore', () => {
   it('fecha a conexão ao destruir o injector', () => {
     TestBed.resetTestingModule();
     expect(fonte.fechada).toBe(true);
+  });
+
+  it('quando o EventSource desiste (CLOSED), recria a conexão com espera e volta ao vivo', () => {
+    vi.useFakeTimers();
+    fonte.emitir('snapshot', [cot(1, 'PETR4', 38)]);
+    const primeira = fonte;
+    primeira.desistir();
+    expect(store.status()).toBe('reconectando');
+    expect(primeira.fechada).toBe(true);
+    vi.advanceTimersByTime(1000);
+    expect(fontes).toHaveLength(2);
+    fonte.emitir('cotacoes', [cot(1, 'PETR4', 41)]);
+    expect(store.status()).toBe('ao-vivo');
+    expect(store.cotacao(1)?.preco).toBe(41);
   });
 });

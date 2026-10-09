@@ -95,4 +95,38 @@ describe('Boleta', () => {
     expect(api.comprar).not.toHaveBeenCalled();
     expect(api.travar).toHaveBeenCalledTimes(2);
   });
+
+  it('ticks da mesma ação não renovam a trava nem apagam a confirmação', () => {
+    api.comprar.mockReturnValue(of({ compra: { id: 1, carteiraId: 1, acaoId: 10, ticker: 'PETR4', quantidade: 1, precoUnitario: 33.33, total: 33.33, data: '' }, saldoRestante: 66.67 }));
+    const fixture = montar();
+    const c = fixture.componentInstance;
+    c.confirmar();
+    const travasDepoisDaOrdem = api.travar.mock.calls.length;
+    for (const preco of [33.4, 33.5, 33.6]) {
+      fixture.componentRef.setInput('acao', { ...acao, preco });
+      fixture.detectChanges();
+    }
+    expect(api.travar).toHaveBeenCalledTimes(travasDepoisDaOrdem);
+    expect(c.ultima()).not.toBeNull();
+    fixture.destroy();
+  });
+
+  it('a contagem usa a validade de 8 s a partir do recebimento (imune ao relógio do servidor)', () => {
+    api.travar.mockReturnValue(of({ token: 'antigo', acaoId: 10, preco: 33.33, expiraEm: '2020-01-01T00:00:00.000Z' }));
+    const c = montar().componentInstance;
+    expect(c.segundosRestantes()).toBe(8);
+    expect(c.expirada()).toBe(false);
+  });
+
+  it('deep link para a segunda carteira aparece selecionado no select', () => {
+    api.carteiras.mockReturnValue(of([...carteiras, { id: 2, nome: 'Arrojada', descricao: null, saldo: 500, criadoEm: '', valorInvestido: 0, qtdAtivos: 0 }]));
+    const fixture = TestBed.createComponent(Boleta);
+    fixture.componentRef.setInput('acao', acao);
+    fixture.componentRef.setInput('carteiraInicial', 2);
+    fixture.detectChanges();
+    fixture.detectChanges();
+    const select = (fixture.nativeElement as HTMLElement).querySelector('select')!;
+    expect(select.value).toBe('2');
+    fixture.destroy();
+  });
 });

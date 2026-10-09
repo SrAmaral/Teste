@@ -53,4 +53,17 @@ describe('ExtratoPage', () => {
     fixture.componentInstance.ordenar('valor');
     expect(navegar).toHaveBeenLastCalledWith([], expect.objectContaining({ queryParams: { tipo: 'COMPRA', ordem: 'valor' } }));
   });
+
+  it('o select de carteira reflete o filtro da URL depois que a lista chega', () => {
+    api.listar.mockReturnValue(of([
+      { id: 1, nome: 'A', descricao: null, saldo: 0, criadoEm: '', valorInvestido: 0, qtdAtivos: 0 },
+      { id: 2, nome: 'B', descricao: null, saldo: 0, criadoEm: '', valorInvestido: 0, qtdAtivos: 0 },
+    ]));
+    query.next(convertToParamMap({ carteiraId: '2' }));
+    const fixture = TestBed.createComponent(ExtratoPage);
+    fixture.detectChanges();
+    const select = (fixture.nativeElement as HTMLElement).querySelector('select')!;
+    expect(select.value).toBe('2');
+    query.next(convertToParamMap({ tipo: 'COMPRA', pagina: '1' }));
+  });
 });
