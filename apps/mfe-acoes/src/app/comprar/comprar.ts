@@ -6,54 +6,61 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Acao, COMPRA_REALIZADA_EVENT, CarteiraResumo, CompraResultado } from '@safra/shared';
-import { finalize } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
 import { AcoesApi } from '../data/acoes-api';
 
 const arredondar = (valor: number) => Math.round((valor + Number.EPSILON) * 100) / 100;
 
 @Component({
   selector: 'app-comprar',
-  imports: [CurrencyPipe, ReactiveFormsModule, RouterLink, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule],
+  imports: [CurrencyPipe, ReactiveFormsModule, RouterLink, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatProgressSpinnerModule, MatSelectModule],
   template: `
-    <form [formGroup]="form" (ngSubmit)="comprar()" class="compra">
-      <mat-form-field appearance="outline">
-        <mat-label>Carteira</mat-label>
-        <mat-select formControlName="carteiraId">
-          @for (c of carteiras(); track c.id) {
-            <mat-option [value]="c.id">{{ c.nome }} — saldo {{ c.saldo | currency }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+    @if (carregando()) {
+      <div class="estado"><mat-spinner diameter="40" /></div>
+    } @else if (erro()) {
+      <p class="estado">Não foi possível carregar carteiras e ações. <button mat-button (click)="carregarListas()">Tentar novamente</button></p>
+    } @else {
+      <form [formGroup]="form" (ngSubmit)="comprar()" class="compra">
+        <mat-form-field appearance="outline">
+          <mat-label>Carteira</mat-label>
+          <mat-select formControlName="carteiraId">
+            @for (c of carteiras(); track c.id) {
+              <mat-option [value]="c.id">{{ c.nome }} — saldo {{ c.saldo | currency }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Ação</mat-label>
-        <mat-select formControlName="acaoId">
-          @for (a of acoes(); track a.id) {
-            <mat-option [value]="a.id">{{ a.ticker }} · {{ a.nome }} — {{ a.preco | currency }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Ação</mat-label>
+          <mat-select formControlName="acaoId">
+            @for (a of acoes(); track a.id) {
+              <mat-option [value]="a.id">{{ a.ticker }} · {{ a.nome }} — {{ a.preco | currency }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Quantidade</mat-label>
-        <input matInput type="number" min="1" step="1" formControlName="quantidade" />
-        @if (form.controls.quantidade.invalid) { <mat-error>Informe um número inteiro maior que zero.</mat-error> }
-      </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Quantidade</mat-label>
+          <input matInput type="number" min="1" step="1" formControlName="quantidade" />
+          @if (form.controls.quantidade.invalid) { <mat-error>Informe um número inteiro maior que zero.</mat-error> }
+        </mat-form-field>
 
-      <section class="resumo" aria-live="polite">
-        <div><span>Total</span><strong>{{ total() | currency }}</strong></div>
-        <div><span>Saldo após a compra</span><strong [class.negativo]="saldoInsuficiente()">{{ saldoApos() | currency }}</strong></div>
-      </section>
+        <section class="resumo" aria-live="polite">
+          <div><span>Total</span><strong>{{ total() | currency }}</strong></div>
+          <div><span>Saldo após a compra</span><strong [class.negativo]="saldoInsuficiente()">{{ saldoApos() === null ? '—' : (saldoApos() | currency) }}</strong></div>
+        </section>
 
-      @if (saldoInsuficiente()) {
-        <p class="alerta" role="alert">Saldo insuficiente para esta compra.</p>
-      }
+        @if (saldoInsuficiente()) {
+          <p class="alerta" role="alert">Saldo insuficiente para esta compra.</p>
+        }
 
-      <button mat-flat-button type="submit" data-testid="comprar" [disabled]="!podeComprar()">Comprar</button>
-    </form>
+        <button mat-flat-button type="submit" data-testid="comprar" [disabled]="!podeComprar()">Comprar</button>
+      </form>
+    }
 
     @if (ultimaCompra(); as r) {
       <mat-card class="sucesso" appearance="outlined" role="status">
@@ -62,7 +69,11 @@ const arredondar = (valor: number) => Math.round((valor + Number.EPSILON) * 100)
           Saldo restante: {{ r.saldoRestante | currency }}.
         </mat-card-content>
         <mat-card-actions>
-          <a mat-button [routerLink]="['/carteiras', r.compra.carteiraId]">Ver carteira</a>
+          @if (carteirasDisponivel) {
+            <a mat-button [routerLink]="['/carteiras', r.compra.carteiraId]">Ver carteira</a>
+          } @else {
+            <span class="dica">Abra pelo shell (localhost:4200) para ver a carteira.</span>
+          }
         </mat-card-actions>
       </mat-card>
     }
@@ -75,6 +86,8 @@ const arredondar = (valor: number) => Math.round((valor + Number.EPSILON) * 100)
     .resumo strong { font-size: 20px; color: var(--safra-marinho); }
     .resumo strong.negativo { color: var(--safra-erro); }
     .alerta { color: var(--safra-erro); margin: 0 0 16px; }
+    .estado { display: flex; justify-content: center; align-items: center; gap: 8px; padding: 48px 0; opacity: 0.8; }
+    .dica { font-size: 13px; opacity: 0.7; padding: 0 8px; }
     .sucesso { max-width: 560px; margin-top: 16px; border-left: 4px solid var(--safra-sucesso); }
   `,
 })
@@ -85,6 +98,10 @@ export class Comprar {
   readonly acoes = signal<Acao[]>([]);
   readonly enviando = signal(false);
   readonly ultimaCompra = signal<CompraResultado | null>(null);
+  readonly carregando = signal(true);
+  readonly erro = signal(false);
+  /** A rota /carteiras só existe quando o MFE está hospedado no shell; no modo standalone o link não teria destino. */
+  readonly carteirasDisponivel = inject(Router).config.some((r) => r.path === 'carteiras');
 
   readonly form = inject(NonNullableFormBuilder).group({
     carteiraId: [0, [Validators.required, Validators.min(1)]],
@@ -102,7 +119,10 @@ export class Comprar {
     const quantidade = Number(this.valor().quantidade ?? 0);
     return acao && quantidade > 0 ? arredondar(acao.preco * quantidade) : 0;
   });
-  readonly saldoApos = computed(() => arredondar((this.carteira()?.saldo ?? 0) - this.total()));
+  readonly saldoApos = computed(() => {
+    const carteira = this.carteira();
+    return carteira ? arredondar(carteira.saldo - this.total()) : null;
+  });
   readonly saldoInsuficiente = computed(() => {
     const carteira = this.carteira();
     return !!carteira && this.total() > carteira.saldo;
@@ -110,8 +130,21 @@ export class Comprar {
   readonly podeComprar = computed(() => this.status() === 'VALID' && this.total() > 0 && !this.saldoInsuficiente() && !this.enviando());
 
   constructor() {
-    this.carregarCarteiras();
-    this.api.listar().subscribe({ next: (lista) => this.acoes.set(lista), error: () => undefined });
+    this.carregarListas();
+  }
+
+  carregarListas(): void {
+    this.carregando.set(true);
+    this.erro.set(false);
+    forkJoin({ carteiras: this.api.carteiras(), acoes: this.api.listar() })
+      .pipe(finalize(() => this.carregando.set(false)))
+      .subscribe({
+        next: ({ carteiras, acoes }) => {
+          this.carteiras.set(carteiras);
+          this.acoes.set(acoes);
+        },
+        error: () => this.erro.set(true),
+      });
   }
 
   comprar(): void {
