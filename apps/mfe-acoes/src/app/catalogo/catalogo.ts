@@ -1,65 +1,74 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTableModule } from '@angular/material/table';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { RouterLink } from '@angular/router';
 import { Acao, NovaAcao } from '@safra/shared';
 import { filter, finalize, switchMap } from 'rxjs';
 import { AcoesApi } from '../data/acoes-api';
 import { ConfirmDialog, ConfirmacaoDados } from '../shared/confirm-dialog';
+import { EstadoVazio } from '../ui/estado-vazio';
 import { AcaoDialog } from './acao-dialog';
 
 @Component({
   selector: 'app-catalogo',
-  imports: [CurrencyPipe, MatTableModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, MatProgressSpinnerModule, MatTooltipModule],
+  imports: [CurrencyPipe, RouterLink, MatIconModule, EstadoVazio],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="barra">
-      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="filtro">
-        <mat-label>Filtrar por ticker ou nome</mat-label>
-        <mat-icon matPrefix>search</mat-icon>
-        <input matInput [value]="filtro()" (input)="filtro.set($any($event.target).value)" />
-      </mat-form-field>
-      <button mat-flat-button (click)="abrir(null)"><mat-icon>add</mat-icon>Nova ação</button>
-    </div>
+    <a class="voltar" routerLink="/acoes"><mat-icon>arrow_back</mat-icon>Mercado</a>
+    <header class="pagina-cabecalho">
+      <div><h1>Catálogo de ações</h1><p>Ativos disponíveis para negociação.</p></div>
+      <button class="btn btn-primario" type="button" (click)="abrir(null)"><mat-icon>add</mat-icon>Nova ação</button>
+    </header>
 
-    @if (carregando()) {
-      <div class="estado"><mat-spinner diameter="40" /></div>
-    } @else if (erro()) {
-      <p class="estado">Não foi possível carregar as ações. <button mat-button (click)="carregar()">Tentar novamente</button></p>
-    } @else if (filtradas().length === 0) {
-      <p class="estado">Nenhuma ação encontrada.</p>
-    } @else {
-      <div class="tabela">
-        <table mat-table [dataSource]="filtradas()">
-          <ng-container matColumnDef="ticker"><th mat-header-cell *matHeaderCellDef>Ticker</th><td mat-cell *matCellDef="let a"><strong>{{ a.ticker }}</strong></td></ng-container>
-          <ng-container matColumnDef="nome"><th mat-header-cell *matHeaderCellDef>Nome</th><td mat-cell *matCellDef="let a">{{ a.nome }}</td></ng-container>
-          <ng-container matColumnDef="setor"><th mat-header-cell *matHeaderCellDef>Setor</th><td mat-cell *matCellDef="let a">{{ a.setor ?? '—' }}</td></ng-container>
-          <ng-container matColumnDef="preco"><th mat-header-cell *matHeaderCellDef>Preço</th><td mat-cell *matCellDef="let a">{{ a.preco | currency }}</td></ng-container>
-          <ng-container matColumnDef="acoes">
-            <th mat-header-cell *matHeaderCellDef></th>
-            <td mat-cell *matCellDef="let a" class="acoes">
-              <button mat-icon-button (click)="abrir(a)" matTooltip="Editar" aria-label="Editar"><mat-icon>edit</mat-icon></button>
-              <button mat-icon-button (click)="excluir(a)" matTooltip="Excluir" aria-label="Excluir"><mat-icon>delete</mat-icon></button>
-            </td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="colunas"></tr>
-          <tr mat-row *matRowDef="let linha; columns: colunas"></tr>
-        </table>
+    <section class="sf-card">
+      <div class="barra">
+        <label class="busca">
+          <mat-icon aria-hidden="true">search</mat-icon>
+          <input type="search" placeholder="Filtrar por ticker ou nome" [value]="filtro()" (input)="filtro.set($any($event.target).value)" aria-label="Filtrar ações" />
+        </label>
+        <span class="neutro num">{{ filtradas().length }} ativo(s)</span>
       </div>
-    }
+
+      @if (carregando()) {
+        <div class="carregando">@for (i of [1, 2, 3, 4]; track i) { <span class="skeleton" style="height: 18px"></span> }</div>
+      } @else if (erro()) {
+        <app-estado-vazio icone="cloud_off" titulo="Não foi possível carregar as ações">
+          <button class="btn" type="button" (click)="carregar()">Tentar novamente</button>
+        </app-estado-vazio>
+      } @else if (filtradas().length === 0) {
+        <app-estado-vazio icone="search_off" titulo="Nenhuma ação encontrada" />
+      } @else {
+        <div class="tabela-container">
+          <table class="tabela">
+            <thead><tr><th>Ticker</th><th>Nome</th><th>Setor</th><th class="direita">Preço</th><th></th></tr></thead>
+            <tbody>
+              @for (a of filtradas(); track a.id) {
+                <tr>
+                  <td class="ticker">{{ a.ticker }}</td>
+                  <td>{{ a.nome }}</td>
+                  <td class="neutro">{{ a.setor ?? '—' }}</td>
+                  <td class="direita num">{{ a.preco | currency }}</td>
+                  <td class="direita">
+                    <button class="btn btn-icone" type="button" (click)="abrir(a)" aria-label="Editar"><mat-icon>edit</mat-icon></button>
+                    <button class="btn btn-icone" type="button" (click)="excluir(a)" aria-label="Excluir"><mat-icon>delete</mat-icon></button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
   `,
   styles: `
-    .barra { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin: 16px 0; }
-    .filtro { flex: 1; max-width: 360px; }
-    .estado { display: flex; justify-content: center; align-items: center; gap: 8px; padding: 48px 0; opacity: 0.8; }
-    .tabela { overflow-x: auto; background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); }
-    table { width: 100%; }
-    td.acoes { text-align: right; white-space: nowrap; }
+    .voltar { display: inline-flex; align-items: center; gap: 4px; color: var(--tx-3); margin-bottom: 12px; }
+    .voltar .mat-icon { font-size: 18px; width: 18px; height: 18px; }
+    .barra { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--sf-border); }
+    .busca { display: flex; align-items: center; gap: 6px; flex: 1; max-width: 340px; height: 34px; padding: 0 10px; border: 1px solid var(--sf-border-strong); border-radius: var(--raio-sm); background: var(--sf-bg); }
+    .busca input { all: unset; flex: 1; color: var(--tx-1); font-size: 13px; }
+    .busca .mat-icon { color: var(--tx-3); font-size: 18px; width: 18px; height: 18px; }
+    .carregando { display: grid; gap: 12px; padding: 18px; }
   `,
 })
 export class Catalogo {
@@ -70,7 +79,6 @@ export class Catalogo {
   readonly filtro = signal('');
   readonly carregando = signal(true);
   readonly erro = signal(false);
-  readonly colunas = ['ticker', 'nome', 'setor', 'preco', 'acoes'];
 
   readonly filtradas = computed(() => {
     const termo = this.filtro().trim().toUpperCase();

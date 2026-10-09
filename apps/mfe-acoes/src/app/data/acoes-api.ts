@@ -1,6 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { API_BASE_URL, Acao, CarteiraResumo, CompraResultado, NovaAcao, NovaCompra } from '@safra/shared';
+import {
+  API_BASE_URL,
+  Acao,
+  CarteiraResumo,
+  CompraResultado,
+  Cotacao,
+  NovaAcao,
+  NovaCompra,
+  NovaVenda,
+  Posicao,
+  Trava,
+  VendaResultado,
+} from '@safra/shared';
 
 /** Provido nas rotas do MFE (não em root): quando hospedado, o root injector é o do shell. */
 @Injectable()
@@ -30,5 +42,21 @@ export class AcoesApi {
 
   comprar(dados: NovaCompra) {
     return this.http.post<CompraResultado>(`${API_BASE_URL}/compras`, dados);
+  }
+
+  cotacoes() {
+    return this.http.get<Cotacao[]>(`${API_BASE_URL}/cotacoes`);
+  }
+
+  travar(acaoId: number) {
+    return this.http.post<Trava>(`${API_BASE_URL}/cotacoes/${acaoId}/trava`, {});
+  }
+
+  vender(dados: NovaVenda) {
+    return this.http.post<VendaResultado>(`${API_BASE_URL}/vendas`, dados);
+  }
+
+  posicoes(carteiraId: number) {
+    return this.http.get<Posicao[]>(`${API_BASE_URL}/carteiras/${carteiraId}/posicoes`);
   }
 }

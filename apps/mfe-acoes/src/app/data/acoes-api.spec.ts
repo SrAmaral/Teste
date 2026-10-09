@@ -42,4 +42,13 @@ describe('AcoesApi', () => {
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({ carteiraId: 1, acaoId: 2, quantidade: 3 });
   });
+
+  it('trava cotação, vende e lê posições da carteira', () => {
+    api.travar(5).subscribe();
+    expect(http.expectOne(`${API_BASE_URL}/cotacoes/5/trava`).request.method).toBe('POST');
+    api.vender({ carteiraId: 1, acaoId: 5, quantidade: 2, travaToken: 't' }).subscribe();
+    expect(http.expectOne(`${API_BASE_URL}/vendas`).request.body).toEqual({ carteiraId: 1, acaoId: 5, quantidade: 2, travaToken: 't' });
+    api.posicoes(1).subscribe();
+    expect(http.expectOne(`${API_BASE_URL}/carteiras/1/posicoes`).request.method).toBe('GET');
+  });
 });
