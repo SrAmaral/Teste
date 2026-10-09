@@ -5,10 +5,11 @@ import { criarApp } from './app';
 import { abrirBanco } from './db/connection';
 import { ouvir } from './servidor';
 
-const pastaDados = join(dirname(fileURLToPath(import.meta.url)), '..', 'data');
-mkdirSync(pastaDados, { recursive: true });
+// Padrão: api/data/safra.db. No container, SAFRA_DB aponta para o volume (/data/safra.db).
+const caminhoBanco = process.env.SAFRA_DB ?? join(dirname(fileURLToPath(import.meta.url)), '..', 'data', 'safra.db');
+if (caminhoBanco !== ':memory:') mkdirSync(dirname(caminhoBanco), { recursive: true });
 
-const db = abrirBanco(process.env.SAFRA_DB ?? join(pastaDados, 'safra.db'), { seed: true });
+const db = abrirBanco(caminhoBanco, { seed: true });
 const porta = Number(process.env.PORT ?? 3000);
 
 try {
