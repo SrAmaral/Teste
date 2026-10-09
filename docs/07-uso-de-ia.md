@@ -52,9 +52,45 @@ Nenhuma etapa foi dada como pronta sem evidência: suíte de testes completa, bu
 | Aprovação da spec e do plano | Spec, plano, código, testes e esta documentação |
 | Revisão final | Verificação automatizada e no navegador |
 
-## Prompt inicial (resumo)
+## Prompts utilizados
 
-> "Criar um projeto Angular com micro front-ends, com menu, páginas e CRUD: um MFE de carteiras e um de compra de ações relacionado às carteiras. A Home deve ser a documentação de como o projeto foi feito, sua estrutura e como a IA foi usada."
+Os pedidos feitos ao agente, na ordem da sessão, em formato de especificação técnica.
+
+### 1. Escopo inicial (fase 1)
+
+> Projete e implemente uma SPA em **Angular** com **arquitetura de micro front-ends**, no padrão adotado pelo Banco Safra. Composição:
+> - **Shell (host)** responsável por layout, menu de navegação e roteamento entre os módulos.
+> - **MFE Carteiras** com CRUD completo de carteiras de investimento.
+> - **MFE Ações** com CRUD do catálogo de ações e fluxo de **compra**, onde cada compra é vinculada a uma carteira (relacionamento entre domínios de MFEs distintos).
+> - **Home** com a documentação técnica do projeto: decisões de arquitetura, estrutura de pastas, contratos e o processo de desenvolvimento assistido por IA.
+>
+> Conduza o trabalho com o fluxo do Superpowers: *brainstorming* → especificação → plano de implementação → execução.
+
+### 2. Persistência e prazo
+
+> Entrega no mesmo dia. Substitua dados simulados por **serviços reais com persistência em SQLite**, expostos por uma API REST consumida pelos MFEs.
+
+### 3. Correção da revisão final (fase 1)
+
+> Implemente as correções apontadas na revisão de código final (itens classificados como pendentes): validação monetária, códigos HTTP corretos para erros do *body-parser*, estados de *loading*/erro, navegação entre MFEs no modo *standalone* e consistência de build da documentação.
+
+### 4. Evolução funcional e redesign (fase 2)
+
+> A aplicação atende ao CRUD, mas está rasa para uma avaliação técnica e com aparência de **Angular Material sem customização**. Evolua em duas frentes:
+> - **Funcional:** cotações em **tempo real** (*streaming* do servidor), **venda** de ações com apuração de resultado, **extrato** de movimentações com filtros e paginação, e **dashboard** consolidado com indicadores e gráficos — priorizando soluções que demonstrem domínio técnico (concorrência de preço, reatividade, modelagem de dados, testes).
+> - **Visual:** design system próprio, aderente a produtos do mercado financeiro (hierarquia tipográfica, números tabulares, semântica de alta/baixa, acessibilidade), substituindo o visual padrão do Material.
+
+### 5. Pendências da revisão (fase 2)
+
+> Resolva todos os itens classificados como menores na revisão final: ciclo de vida das conexões SSE por tela, `aria-live` nos valores agregados, consumo do token de cotação somente após validação, filtro de período no fuso do usuário, saneamento do filtro de *ticker*, preço vivo no catálogo, supressão de notificações em *polling* e semântica ARIA do seletor de lado da ordem.
+
+### 6. Ajustes de layout
+
+> Corrija problemas de responsividade: deslocamento do conteúdo, rolagem horizontal indevida e espaçamentos excessivos. Valide em *desktop* e *mobile*.
+
+### 7. Documentação
+
+> Reescreva os prompts registrados nesta página em linguagem técnica, no formato de especificação.
 
 ## Limites e cuidados
 
@@ -64,7 +100,7 @@ Nenhuma etapa foi dada como pronta sem evidência: suíte de testes completa, bu
 
 ## Fase 2 — mercado ao vivo e redesign
 
-Pedido: "o sistema está simples; refine as funcionalidades, deixe-as tecnicamente apelativas e melhore o design, que está muito Angular Material padrão".
+Pedido: evoluir a aplicação nas frentes funcional (tempo real, venda, extrato, dashboard) e visual (design system próprio) (prompt 4 da seção "Prompts utilizados").
 
 - **Brainstorming com *visual companion***: a IA mostrou no navegador três direções visuais para o mesmo dashboard (private banking escuro, fintech clara, terminal de trading); a escolha humana foi um **híbrido terminal + fintech**, depois validado com mockups das telas de Dashboard e Mercado + boleta.
 - **Decisões técnicas propostas com alternativas** e aprovadas: SSE, gráficos em SVG próprio, design tokens sobre o Material, migrações versionadas, trava de cotação RFQ.
