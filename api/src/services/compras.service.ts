@@ -5,6 +5,7 @@ import { DomainError, naoEncontrado } from '../errors';
 import type { AcoesRepository } from '../repositories/acoes.repository';
 import type { CarteirasRepository } from '../repositories/carteiras.repository';
 import type { ComprasRepository } from '../repositories/compras.repository';
+import type { Travas } from '../mercado/travas';
 import type { NovaCompraInput } from '../schemas/compras';
 
 export class ComprasService {
@@ -13,6 +14,7 @@ export class ComprasService {
     private readonly carteiras: CarteirasRepository,
     private readonly acoes: AcoesRepository,
     private readonly compras: ComprasRepository,
+    private readonly travas: Travas,
   ) {}
 
   comprar(dados: NovaCompraInput): CompraResultado {
@@ -22,7 +24,8 @@ export class ComprasService {
       const acao = this.acoes.buscar(dados.acaoId);
       if (!acao) throw naoEncontrado('Ação');
 
-      const total = arredondar(acao.preco * dados.quantidade);
+      const preco = dados.travaToken ? this.travas.consumir(dados.travaToken, acao.id) : acao.preco;
+      const total = arredondar(preco * dados.quantidade);
       if (total > carteira.saldo) {
         throw new DomainError(422, 'SALDO_INSUFICIENTE', 'Saldo insuficiente para esta compra', {
           necessario: total,
@@ -36,7 +39,7 @@ export class ComprasService {
         carteiraId: carteira.id,
         acaoId: acao.id,
         quantidade: dados.quantidade,
-        precoUnitario: acao.preco,
+        precoUnitario: preco,
         total,
       });
       return { compra, saldoRestante };

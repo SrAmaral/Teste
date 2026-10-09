@@ -3,6 +3,7 @@ import { abrirBanco } from '../src/db/connection';
 import { AcoesRepository } from '../src/repositories/acoes.repository';
 import { CarteirasRepository } from '../src/repositories/carteiras.repository';
 import { ComprasRepository } from '../src/repositories/compras.repository';
+import { Travas } from '../src/mercado/travas';
 import { ComprasService } from '../src/services/compras.service';
 import { novaApi } from './helpers';
 
@@ -133,7 +134,7 @@ describe('compras', () => {
     vi.spyOn(compras, 'inserir').mockImplementation(() => {
       throw new Error('falha simulada');
     });
-    const servico = new ComprasService(db, carteiras, acoes, compras);
+    const servico = new ComprasService(db, carteiras, acoes, compras, new Travas());
     expect(() => servico.comprar({ carteiraId: carteira.id, acaoId: acao.id, quantidade: 2 })).toThrow('falha simulada');
     expect(carteiras.buscar(carteira.id)!.saldo).toBe(1000);
   });

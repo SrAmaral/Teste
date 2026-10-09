@@ -30,14 +30,28 @@ export class CarteirasRepository {
   listarResumo(): CarteiraResumo[] {
     const linhas = this.db
       .prepare(
-        `SELECT c.*, COALESCE(SUM(co.total), 0) AS valor_investido, COUNT(DISTINCT co.acao_id) AS qtd_ativos
-           FROM carteiras c
-           LEFT JOIN compras co ON co.carteira_id = c.id
-          GROUP BY c.id
-          ORDER BY c.nome`,
+        `WITH c AS (
+           SELECT carteira_id, acao_id, SUM(quantidade) AS q, SUM(total) AS custo FROM compras GROUP BY carteira_id, acao_id
+         ), v AS (
+           SELECT carteira_id, acao_id, SUM(quantidade) AS q, SUM(custo) AS custo FROM vendas GROUP BY carteira_id, acao_id
+         ), p AS (
+           SELECT c.carteira_id, c.custo - COALESCE(v.custo, 0) AS custo
+             FROM c LEFT JOIN v ON v.carteira_id = c.carteira_id AND v.acao_id = c.acao_id
+            WHERE c.q - COALESCE(v.q, 0) > 0
+         )
+         SELECT ca.*, COALESCE(SUM(p.custo), 0) AS valor_investido, COUNT(p.carteira_id) AS qtd_ativos
+           FROM carteiras ca LEFT JOIN p ON p.carteira_id = ca.id
+          GROUP BY ca.id
+          ORDER BY ca.nome`,
       )
       .all() as ResumoLinha[];
     return linhas.map((l) => ({ ...paraCarteira(l), valorInvestido: arredondar(l.valor_investido), qtdAtivos: l.qtd_ativos }));
+  }
+
+  somarSaldos(carteiraId?: number): number {
+    return (
+      this.db.prepare('SELECT COALESCE(SUM(saldo), 0) AS s FROM carteiras WHERE (@c IS NULL OR id = @c)').get({ c: carteiraId ?? null }) as { s: number }
+    ).s;
   }
 
   buscar(id: number): Carteira | undefined {
