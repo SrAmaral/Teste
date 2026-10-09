@@ -38,3 +38,14 @@ Com tudo rodando, pare só o `mfe-acoes` e recarregue http://localhost:4200/acoe
 ## Resetar os dados
 
 Pare a API e apague `api/data/`.
+
+## Deploy (Docker / Coolify)
+
+O `Dockerfile` da raiz gera um **container único**: a API Express responde em `/api` e serve os builds na mesma origem — shell em `/`, remotes em `/mfe-carteiras/` e `/mfe-acoes/` (o `federation.manifest.json` de produção aponta para essas subpastas). Por isso o front usa `API_BASE_URL = '/api'`; em dev, o `ng serve` de cada app faz proxy de `/api` para a API em `:3000` (`proxy.conf.json`).
+
+```bash
+docker build -t safra-invest-lab .
+docker run -p 3000:3000 -v safra-data:/data safra-invest-lab   # http://localhost:3000
+```
+
+No Coolify: *Build Pack* **Dockerfile**, porta **3000**, e um *Persistent Storage* montado em `/data` (onde fica o `safra.db`; sem ele os dados voltam ao seed a cada deploy).

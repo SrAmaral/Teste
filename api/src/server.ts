@@ -12,7 +12,7 @@ const db = abrirBanco(process.env.SAFRA_DB ?? join(pastaDados, 'safra.db'), { se
 const porta = Number(process.env.PORT ?? 3000);
 
 try {
-  const servidor = await ouvir(criarApp(db), porta);
+  const servidor = await ouvir(criarApp(db, { pastaWeb: process.env.SAFRA_WEB }), porta);
   console.log(`[api] ouvindo em http://localhost:${porta}/api`);
 
   // Encerramento imediato no Ctrl+C: fecha conexões keep-alive (o shell consulta /health a cada 10 s) e o banco.

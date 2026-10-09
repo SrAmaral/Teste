@@ -1,4 +1,5 @@
-export const API_BASE_URL = 'http://localhost:3000/api';
+// Relativo: em dev o `ng serve` de cada app faz proxy de /api para :3000 (proxy.conf.json); em produção a API serve os front-ends na mesma origem.
+export const API_BASE_URL = '/api';
 export const COMPRA_REALIZADA_EVENT = 'safra:compra-realizada';
 
 export interface Carteira {
