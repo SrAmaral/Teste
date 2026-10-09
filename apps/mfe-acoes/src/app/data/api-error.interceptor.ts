@@ -1,0 +1,25 @@
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ApiError } from '@safra/shared';
+import { catchError, throwError } from 'rxjs';
+
+export function mensagemDeErro(err: HttpErrorResponse): string {
+  if (err.status === 0) return 'API indisponível. Verifique se ela está rodando.';
+  const corpo = err.error as Partial<ApiError> | null;
+  const base = corpo?.message ?? 'Erro inesperado';
+  const detalhes = Array.isArray(corpo?.details)
+    ? (corpo.details as { mensagem?: string }[]).map((d) => d.mensagem).filter(Boolean).join('; ')
+    : '';
+  return detalhes ? `${base}: ${detalhes}` : base;
+}
+
+export const apiErrorInterceptor: HttpInterceptorFn = (req, next) => {
+  const snackBar = inject(MatSnackBar);
+  return next(req).pipe(
+    catchError((err: HttpErrorResponse) => {
+      snackBar.open(mensagemDeErro(err), 'Fechar', { duration: 6000, panelClass: 'snack-erro' });
+      return throwError(() => err);
+    }),
+  );
+};
