@@ -43,7 +43,7 @@ export class CarteirasService {
     if (this.repo.contarCompras(id) > 0) {
       throw new DomainError(409, 'CARTEIRA_COM_COMPRAS', 'Carteira possui compras e não pode ser excluída');
     }
-    this.repo.excluir(id);
+    this.db.transaction(() => this.repo.excluir(id))();
   }
 
   depositar(id: number, valor: number): Carteira {

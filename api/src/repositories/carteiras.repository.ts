@@ -75,6 +75,8 @@ export class CarteirasRepository {
   }
 
   excluir(id: number): void {
+    // Depósitos são só movimentação de caixa da carteira: saem junto com ela (compras/vendas bloqueiam a exclusão no service).
+    this.db.prepare('DELETE FROM depositos WHERE carteira_id = ?').run(id);
     this.db.prepare('DELETE FROM carteiras WHERE id = ?').run(id);
   }
 

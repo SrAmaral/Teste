@@ -79,7 +79,14 @@ export class MercadoSimulado {
     if (this.ticks % this.ticksPorPonto === 0) this.registrarPonto(novos.map(([acao, estado]) => [acao.preco, estado] as const));
 
     const cotacoes = novos.map(([acao, estado]) => this.paraCotacao(acao, estado));
-    this.assinantes.forEach((assinante) => assinante(cotacoes));
+    for (const assinante of this.assinantes) {
+      try {
+        assinante(cotacoes);
+      } catch (erro) {
+        // um cliente com problema não pode derrubar o pregão dos demais
+        console.error('[mercado] assinante falhou', erro);
+      }
+    }
     return cotacoes;
   }
 
@@ -89,7 +96,13 @@ export class MercadoSimulado {
   }
 
   iniciar(intervaloMs = 1000): void {
-    this.timer ??= setInterval(() => this.tick(), intervaloMs);
+    this.timer ??= setInterval(() => {
+      try {
+        this.tick();
+      } catch (erro) {
+        console.error('[mercado] tick falhou', erro); // nunca derrubar o processo por um tick
+      }
+    }, intervaloMs);
   }
 
   parar(): void {
