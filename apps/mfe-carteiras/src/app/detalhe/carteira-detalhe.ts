@@ -18,6 +18,8 @@ const r = (n: number) => Math.round(n * 100) / 100;
   selector: 'app-carteira-detalhe',
   imports: [CurrencyPipe, DatePipe, DecimalPipe, RouterLink, MatIconModule, KpiCard, EstadoVazio, FlashDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  // Stream aberto só enquanto a tela existe.
+  providers: [CotacoesStore],
   template: `
     <a class="voltar" routerLink="/carteiras/lista"><mat-icon>arrow_back</mat-icon>Carteiras</a>
 

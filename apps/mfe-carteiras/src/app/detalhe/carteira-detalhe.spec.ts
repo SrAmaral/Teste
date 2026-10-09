@@ -29,11 +29,12 @@ describe('CarteiraDetalhe', () => {
       providers: [
         provideRouter([]),
         { provide: CarteirasApi, useValue: api },
-        { provide: CotacoesStore, useValue: { cotacoes } },
         { provide: LOCALE_ID, useValue: 'pt-BR' },
         { provide: DEFAULT_CURRENCY_CODE, useValue: 'BRL' },
       ],
-    }).compileComponents();
+    })
+      .overrideComponent(CarteiraDetalhe, { set: { providers: [{ provide: CotacoesStore, useValue: { cotacoes } }] } })
+      .compileComponents();
   });
 
   async function montar() {

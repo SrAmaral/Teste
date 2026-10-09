@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { API_BASE_URL } from '@safra/shared';
+import { SILENCIOSO } from './api-error.interceptor';
 import { CarteirasApi } from './carteiras-api';
 
 describe('CarteirasApi', () => {
@@ -54,7 +55,9 @@ describe('CarteirasApi', () => {
 
   it('busca o dashboard consolidado ou de uma carteira', () => {
     api.dashboard().subscribe();
-    expect(http.expectOne(`${API_BASE_URL}/dashboard`).request.params.keys()).toEqual([]);
+    const consolidado = http.expectOne(`${API_BASE_URL}/dashboard`).request;
+    expect(consolidado.params.keys()).toEqual([]);
+    expect(consolidado.context.get(SILENCIOSO)).toBe(true);
     api.dashboard(3).subscribe();
     expect(http.expectOne((r) => r.url === `${API_BASE_URL}/dashboard`).request.params.get('carteiraId')).toBe('3');
   });
@@ -62,7 +65,8 @@ describe('CarteirasApi', () => {
   it('busca o extrato só com os filtros definidos', () => {
     api.extrato({ carteiraId: 2, tipo: 'VENDA', ticker: undefined, pagina: 2 }).subscribe();
     const req = http.expectOne((r) => r.url === `${API_BASE_URL}/extrato`);
-    expect(req.request.params.keys().sort()).toEqual(['carteiraId', 'pagina', 'tipo']);
+    expect(req.request.params.keys().sort()).toEqual(['carteiraId', 'fuso', 'pagina', 'tipo']);
+    expect(req.request.params.get('fuso')).toBe(String(-new Date().getTimezoneOffset()));
     expect(req.request.params.get('tipo')).toBe('VENDA');
   });
 });

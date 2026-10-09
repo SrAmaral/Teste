@@ -1,10 +1,10 @@
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { CarteiraResumo, Dashboard } from '@safra/shared';
-import { catchError, combineLatest, interval, of, startWith, switchMap, tap } from 'rxjs';
+import { catchError, combineLatest, filter, interval, map, of, startWith, switchMap, tap, throttleTime } from 'rxjs';
 import { CarteirasApi } from '../data/carteiras-api';
 import { AreaChart } from '../ui/area-chart';
 import { CotacoesStore } from '../ui/cotacoes-store';
@@ -20,7 +20,10 @@ const sinal = (n: number) => (n > 0 ? '+' : n < 0 ? '−' : '');
   selector: 'app-dashboard',
   imports: [DecimalPipe, RouterLink, MatIconModule, KpiCard, AreaChart, Donut, Variacao, EstadoVazio],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  // Stream aberto só enquanto a tela existe (fecha ao navegar para outro MFE).
+  providers: [CotacoesStore],
   template: `
+    <p class="sr-only" aria-live="polite">{{ anuncio() }}</p>
     <header class="pagina-cabecalho">
       <div>
         <h1>{{ titulo() }}</h1>
@@ -150,6 +153,16 @@ export class DashboardPage {
     const pct = (v.resultadoNaoRealizado / d.investido) * 100;
     return `${sinal(pct)}${Math.abs(pct).toFixed(2).replace('.', ',')}% sobre o custo`;
   });
+  /** Resumo para leitores de tela: no máximo um anúncio por minuto, não a cada tick. */
+  readonly anuncio = toSignal(
+    toObservable(this.aoVivo).pipe(
+      filter((v) => v !== null),
+      throttleTime(60_000),
+      map((v) => `Patrimônio ${brl(v!.patrimonio)}, variação do dia ${sinal(v!.variacaoDia)}${brl(Math.abs(v!.variacaoDia))}`),
+    ),
+    { initialValue: '' },
+  );
+
   readonly blocos = computed(() => [
     { titulo: 'Maiores altas', itens: this.dados()?.maioresAltas ?? [] },
     { titulo: 'Maiores baixas', itens: this.dados()?.maioresBaixas ?? [] },

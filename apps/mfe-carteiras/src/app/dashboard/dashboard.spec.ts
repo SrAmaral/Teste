@@ -7,7 +7,8 @@ import { provideRouter } from '@angular/router';
 import { Cotacao, Dashboard } from '@safra/shared';
 import { of } from 'rxjs';
 import { CarteirasApi } from '../data/carteiras-api';
-import { CotacoesStore } from '../ui/cotacoes-store';
+import { CotacoesStore, FABRICA_EVENT_SOURCE } from '../ui/cotacoes-store';
+import { FonteFalsa } from '../ui/fonte-falsa';
 import { DashboardPage } from './dashboard';
 
 const cotacao = (preco: number): Cotacao => ({ acaoId: 1, ticker: 'ITUB4', nome: 'Itaú', setor: 'Financeiro', preco, abertura: 11, variacao: 0, historico: [11], atualizadoEm: '' });
@@ -34,11 +35,12 @@ describe('DashboardPage', () => {
       providers: [
         provideRouter([]),
         { provide: CarteirasApi, useValue: api },
-        { provide: CotacoesStore, useValue: { cotacoes } },
         { provide: LOCALE_ID, useValue: 'pt-BR' },
         { provide: DEFAULT_CURRENCY_CODE, useValue: 'BRL' },
       ],
-    }).compileComponents();
+    })
+      .overrideComponent(DashboardPage, { set: { providers: [{ provide: CotacoesStore, useValue: { cotacoes } }] } })
+      .compileComponents();
   });
 
   it('recalcula patrimônio, resultado e variação do dia com as cotações ao vivo', () => {
@@ -59,5 +61,34 @@ describe('DashboardPage', () => {
     fixture.detectChanges();
     expect(api.dashboard).toHaveBeenLastCalledWith(7);
     fixture.destroy();
+  });
+
+  it('anuncia o patrimônio para leitores de tela (aria-live, sem anunciar cada tick)', () => {
+    const fixture = TestBed.createComponent(DashboardPage);
+    fixture.detectChanges();
+    const regiao = (fixture.nativeElement as HTMLElement).querySelector('[aria-live="polite"]');
+    expect(regiao?.textContent).toMatch(/Patrimônio R\$\s170,00/);
+    fixture.destroy();
+  });
+});
+
+describe('DashboardPage — conexão do stream', () => {
+  it('abre o stream ao entrar e fecha ao sair da tela', async () => {
+    const fontes: FonteFalsa[] = [];
+    await TestBed.configureTestingModule({
+      imports: [DashboardPage],
+      providers: [
+        provideRouter([]),
+        { provide: CarteirasApi, useValue: { dashboard: () => of(dashboard), listar: () => of([]) } },
+        { provide: FABRICA_EVENT_SOURCE, useValue: () => { const f = new FonteFalsa(); fontes.push(f); return f; } },
+        { provide: LOCALE_ID, useValue: 'pt-BR' },
+        { provide: DEFAULT_CURRENCY_CODE, useValue: 'BRL' },
+      ],
+    }).compileComponents();
+    const fixture = TestBed.createComponent(DashboardPage);
+    fixture.detectChanges();
+    expect(fontes).toHaveLength(1);
+    fixture.destroy();
+    expect(fontes[0].fechada).toBe(true);
   });
 });

@@ -5,7 +5,6 @@ import { DEFAULT_CURRENCY_CODE, LOCALE_ID } from '@angular/core';
 import { Routes } from '@angular/router';
 import { apiErrorInterceptor } from './data/api-error.interceptor';
 import { CarteirasApi } from './data/carteiras-api';
-import { CotacoesStore } from './ui/cotacoes-store';
 import { CarteiraDetalhe } from './detalhe/carteira-detalhe';
 import { DashboardPage } from './dashboard/dashboard';
 import { ExtratoPage } from './extrato/extrato';
@@ -20,7 +19,6 @@ export const CARTEIRAS_ROUTES: Routes = [
     path: '',
     providers: [
       CarteirasApi,
-      CotacoesStore,
       provideHttpClient(withFetch(), withInterceptors([apiErrorInterceptor])),
       { provide: LOCALE_ID, useValue: 'pt-BR' },
       { provide: DEFAULT_CURRENCY_CODE, useValue: 'BRL' },
