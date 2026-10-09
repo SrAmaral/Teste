@@ -1,8 +1,8 @@
 import cors from 'cors';
 import express from 'express';
 import type { DB } from './db/connection';
-import type { MercadoSimulado } from './mercado/mercado-simulado';
-import type { Travas } from './mercado/travas';
+import { MercadoSimulado } from './mercado/mercado-simulado';
+import { Travas } from './mercado/travas';
 import { rotaNaoEncontrada, tratarErros } from './middleware/error-handler';
 import { AcoesRepository } from './repositories/acoes.repository';
 import { CarteirasRepository } from './repositories/carteiras.repository';
@@ -11,6 +11,7 @@ import { ComprasRepository } from './repositories/compras.repository';
 import { rotasAcoes } from './routes/acoes.routes';
 import { rotasCarteiras } from './routes/carteiras.routes';
 import { rotasCompras } from './routes/compras.routes';
+import { rotasCotacoes } from './routes/cotacoes.routes';
 import { AcoesService } from './services/acoes.service';
 import { CarteirasService } from './services/carteiras.service';
 import { ComprasService } from './services/compras.service';
@@ -26,6 +27,8 @@ export interface OpcoesApp {
 }
 
 export function criarApp(db: DB, opcoes: OpcoesApp = {}) {
+  const mercado = opcoes.mercado ?? new MercadoSimulado(db);
+  const travas = opcoes.travas ?? new Travas();
   const app = express();
   app.use(cors({ origin: ORIGENS_PERMITIDAS }));
   app.use(express.json());
@@ -43,6 +46,7 @@ export function criarApp(db: DB, opcoes: OpcoesApp = {}) {
   app.use('/api/carteiras', rotasCarteiras(carteiras, compras));
   app.use('/api/acoes', rotasAcoes(acoes));
   app.use('/api/compras', rotasCompras(compras));
+  app.use('/api/cotacoes', rotasCotacoes(mercado, travas, acoes));
   if (opcoes.pastaWeb) app.use(rotasWeb(opcoes.pastaWeb));
 
   app.use(rotaNaoEncontrada);
