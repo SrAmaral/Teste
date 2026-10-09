@@ -69,7 +69,12 @@
             ],
             "polyfills": [
               "es-module-shims"
-            ]
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "../../node_modules"
+              ]
+            }
           },
           "configurations": {
             "production": {

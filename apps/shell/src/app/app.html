@@ -1,1 +1,25 @@
-<router-outlet />
+<mat-toolbar class="topo">
+  @if (mobile()) {
+    <button mat-icon-button (click)="sidenav.toggle()" aria-label="Abrir menu"><mat-icon>menu</mat-icon></button>
+  }
+  <span class="marca">Safra Invest Lab</span>
+  <span class="selo">teste técnico</span>
+  <span class="espaco"></span>
+  <app-api-status />
+</mat-toolbar>
+
+<mat-sidenav-container class="container">
+  <mat-sidenav #sidenav class="menu" [mode]="mobile() ? 'over' : 'side'" [opened]="!mobile()">
+    <mat-nav-list>
+      @for (item of menu; track item.rota) {
+        <a mat-list-item [routerLink]="item.rota" routerLinkActive #rla="routerLinkActive" [activated]="rla.isActive" (click)="mobile() && sidenav.close()">
+          <mat-icon matListItemIcon>{{ item.icone }}</mat-icon>
+          <span matListItemTitle>{{ item.rotulo }}</span>
+        </a>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content class="conteudo">
+    <router-outlet />
+  </mat-sidenav-content>
+</mat-sidenav-container>
