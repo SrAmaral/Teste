@@ -1,6 +1,8 @@
 import cors from 'cors';
 import express from 'express';
 import type { DB } from './db/connection';
+import type { MercadoSimulado } from './mercado/mercado-simulado';
+import type { Travas } from './mercado/travas';
 import { rotaNaoEncontrada, tratarErros } from './middleware/error-handler';
 import { AcoesRepository } from './repositories/acoes.repository';
 import { CarteirasRepository } from './repositories/carteiras.repository';
@@ -16,7 +18,14 @@ import { rotasWeb } from './web';
 
 export const ORIGENS_PERMITIDAS = ['http://localhost:4200', 'http://localhost:4201', 'http://localhost:4202'];
 
-export function criarApp(db: DB, opcoes: { pastaWeb?: string } = {}) {
+export interface OpcoesApp {
+  /** Pasta com os builds dos front-ends (deploy em container único). */
+  pastaWeb?: string;
+  mercado?: MercadoSimulado;
+  travas?: Travas;
+}
+
+export function criarApp(db: DB, opcoes: OpcoesApp = {}) {
   const app = express();
   app.use(cors({ origin: ORIGENS_PERMITIDAS }));
   app.use(express.json());

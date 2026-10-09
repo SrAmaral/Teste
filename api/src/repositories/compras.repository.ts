@@ -73,11 +73,14 @@ export class ComprasRepository {
       acaoId: l.acao_id,
       ticker: l.ticker,
       nome: l.nome,
+      setor: null, // provisório: preenchido na Task 4
       quantidade: l.quantidade,
       precoMedio: arredondar(l.valor_investido / l.quantidade),
       precoAtual: l.preco_atual,
       valorInvestido: arredondar(l.valor_investido),
       valorAtual: arredondar(l.quantidade * l.preco_atual),
+      resultado: 0,
+      resultadoPercentual: 0,
     }));
   }
 }

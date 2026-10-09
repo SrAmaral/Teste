@@ -33,7 +33,7 @@ describe('compras', () => {
     await api.post('/api/compras').send({ carteiraId: carteira.id, acaoId: acao.id, quantidade: 5 });
     const posicoes = (await api.get(`/api/carteiras/${carteira.id}/posicoes`)).body;
     expect(posicoes).toEqual([
-      { acaoId: acao.id, ticker: 'PETR4', nome: 'Petrobras PN', quantidade: 5, precoMedio: 10, precoAtual: 10, valorInvestido: 50, valorAtual: 50 },
+      { acaoId: acao.id, ticker: 'PETR4', nome: 'Petrobras PN', setor: null, quantidade: 5, precoMedio: 10, precoAtual: 10, valorInvestido: 50, valorAtual: 50, resultado: 0, resultadoPercentual: 0 },
     ]);
     const resumo = (await api.get('/api/carteiras')).body[0];
     expect(resumo).toMatchObject({ valorInvestido: 50, qtdAtivos: 1 });

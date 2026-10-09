@@ -38,8 +38,8 @@ describe('CarteiraDetalhe', () => {
     api.obter.mockReturnValue(of({ id: 1, nome: 'Renda', descricao: null, saldo: 100, criadoEm: '' }));
     api.posicoes.mockReturnValue(
       of([
-        { acaoId: 1, ticker: 'PETR4', nome: 'Petrobras', quantidade: 10, precoMedio: 10, precoAtual: 12, valorInvestido: 100, valorAtual: 120 },
-        { acaoId: 2, ticker: 'VALE3', nome: 'Vale', quantidade: 1, precoMedio: 50, precoAtual: 40, valorInvestido: 50, valorAtual: 40 },
+        { acaoId: 1, ticker: 'PETR4', nome: 'Petrobras', setor: null, quantidade: 10, precoMedio: 10, precoAtual: 12, valorInvestido: 100, valorAtual: 120, resultado: 0, resultadoPercentual: 0 },
+        { acaoId: 2, ticker: 'VALE3', nome: 'Vale', setor: null, quantidade: 1, precoMedio: 50, precoAtual: 40, valorInvestido: 50, valorAtual: 40, resultado: 0, resultadoPercentual: 0 },
       ]),
     );
     api.compras.mockReturnValue(of([]));
