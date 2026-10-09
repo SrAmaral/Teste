@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { acaoSchema, filtroAcoesSchema } from '../schemas/acoes';
+import { acaoSchema, atualizaAcaoSchema, filtroAcoesSchema } from '../schemas/acoes';
 import { idSchema } from '../schemas/comum';
 import type { AcoesService } from '../services/acoes.service';
 
@@ -19,7 +19,7 @@ export function rotasAcoes(acoes: AcoesService): Router {
   });
 
   rotas.put('/:id', (req, res) => {
-    res.json(acoes.atualizar(idSchema.parse(req.params.id), acaoSchema.parse(req.body)));
+    res.json(acoes.atualizar(idSchema.parse(req.params.id), atualizaAcaoSchema.parse(req.body)));
   });
 
   rotas.delete('/:id', (req, res) => {

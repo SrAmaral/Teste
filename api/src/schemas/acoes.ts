@@ -16,4 +16,8 @@ export const filtroAcoesSchema = z.object({
   ticker: z.string().trim().optional(),
 });
 
+/** Na edição o preço é opcional: sem ele, mantém o preço vivo do mercado. */
+export const atualizaAcaoSchema = acaoSchema.partial({ preco: true });
+
 export type AcaoInput = z.output<typeof acaoSchema>;
+export type AtualizaAcaoInput = z.output<typeof atualizaAcaoSchema>;

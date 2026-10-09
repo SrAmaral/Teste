@@ -33,7 +33,8 @@ export class VendasService {
         });
       }
 
-      const preco = dados.travaToken ? this.travas.consumir(dados.travaToken, acao.id) : acao.preco;
+      const preco = dados.travaToken ? this.travas.precoValido(dados.travaToken, acao.id) : acao.preco;
+      if (dados.travaToken) this.travas.consumir(dados.travaToken, acao.id);
       const total = arredondar(preco * dados.quantidade);
       // Custo médio; vendendo tudo, baixa o custo restante inteiro (sem centavos residuais).
       const custo =

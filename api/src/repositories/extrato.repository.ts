@@ -44,8 +44,9 @@ export class ExtratoRepository {
     };
     if (f.carteiraId !== undefined) filtrar('mov.carteira_id = @carteiraId', 'carteiraId', f.carteiraId);
     if (f.tipo) filtrar('mov.tipo = @tipo', 'tipo', f.tipo);
-    if (f.de) filtrar('date(mov.data) >= @de', 'de', f.de);
-    if (f.ate) filtrar('date(mov.data) <= @ate', 'ate', f.ate);
+    if (f.de || f.ate) parametros.ajuste = `${f.fuso ?? 0} minutes`;
+    if (f.de) filtrar('date(mov.data, @ajuste) >= @de', 'de', f.de);
+    if (f.ate) filtrar('date(mov.data, @ajuste) <= @ate', 'ate', f.ate);
     if (f.ticker) filtrar("mov.ticker LIKE '%' || @ticker || '%'", 'ticker', f.ticker.toUpperCase());
     const where = condicoes.length ? `WHERE ${condicoes.join(' AND ')}` : '';
     const direcao = f.direcao === 'asc' ? 'ASC' : 'DESC';

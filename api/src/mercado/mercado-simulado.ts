@@ -22,6 +22,8 @@ interface AcaoLinha {
 interface Estado {
   abertura: number;
   historico: number[];
+  /** Último preço escrito pelo simulador — se o banco divergir, alguém mudou o preço por fora. */
+  ultimoPreco: number;
 }
 
 type Assinante = (cotacoes: Cotacao[]) => void;
@@ -71,6 +73,7 @@ export class MercadoSimulado {
     const atualizar = this.db.prepare('UPDATE acoes SET preco = ? WHERE id = ?');
     const novos = atuais.map(([acao, estado]) => {
       const preco = Math.max(0.01, arredondar(acao.preco * Math.exp(this.volatilidade * this.normal())));
+      estado.ultimoPreco = preco;
       return [{ ...acao, preco }, estado] as const;
     });
     this.db.transaction(() => novos.forEach(([acao]) => atualizar.run(acao.preco, acao.id)))();
@@ -121,8 +124,10 @@ export class MercadoSimulado {
     for (const id of this.estados.keys()) if (!ids.has(id)) this.estados.delete(id);
     return acoes.map((acao) => {
       let estado = this.estados.get(acao.id);
-      if (!estado) {
-        estado = { abertura: acao.preco, historico: Array(this.tempos.length).fill(acao.preco) };
+      // Ação nova, ou preço alterado fora do simulador (edição no catálogo): vira a nova abertura,
+      // para a variação do dia não saltar.
+      if (!estado || estado.ultimoPreco !== acao.preco) {
+        estado = { abertura: acao.preco, historico: Array(this.tempos.length).fill(acao.preco), ultimoPreco: acao.preco };
         this.estados.set(acao.id, estado);
       }
       return [acao, estado] as const;

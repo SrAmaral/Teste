@@ -24,7 +24,7 @@ export class ComprasService {
       const acao = this.acoes.buscar(dados.acaoId);
       if (!acao) throw naoEncontrado('Ação');
 
-      const preco = dados.travaToken ? this.travas.consumir(dados.travaToken, acao.id) : acao.preco;
+      const preco = dados.travaToken ? this.travas.precoValido(dados.travaToken, acao.id) : acao.preco;
       const total = arredondar(preco * dados.quantidade);
       if (total > carteira.saldo) {
         throw new DomainError(422, 'SALDO_INSUFICIENTE', 'Saldo insuficiente para esta compra', {
@@ -33,6 +33,8 @@ export class ComprasService {
         });
       }
 
+      // só gasta a trava depois de validar o saldo: uma recusa não obriga a pedir nova cotação
+      if (dados.travaToken) this.travas.consumir(dados.travaToken, acao.id);
       const saldoRestante = arredondar(carteira.saldo - total);
       this.carteiras.atualizarSaldo(carteira.id, saldoRestante);
       const compra = this.compras.inserir({

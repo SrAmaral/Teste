@@ -1,7 +1,7 @@
 import type { Acao } from '@safra/shared';
 import { paraIsoUtc } from '../datas';
 import type { DB } from '../db/connection';
-import type { AcaoInput } from '../schemas/acoes';
+import type { AcaoInput, AtualizaAcaoInput } from '../schemas/acoes';
 
 interface AcaoLinha {
   id: number;
@@ -43,10 +43,12 @@ export class AcoesRepository {
     return this.buscar(Number(lastInsertRowid))!;
   }
 
-  atualizar(id: number, d: AcaoInput): void {
+  atualizar(id: number, d: AtualizaAcaoInput): void {
     this.db
-      .prepare(`UPDATE acoes SET ticker = ?, nome = ?, setor = ?, preco = ?, atualizado_em = datetime('now') WHERE id = ?`)
-      .run(d.ticker, d.nome, d.setor ?? null, d.preco, id);
+      .prepare(
+        `UPDATE acoes SET ticker = @ticker, nome = @nome, setor = @setor, preco = COALESCE(@preco, preco), atualizado_em = datetime('now') WHERE id = @id`,
+      )
+      .run({ id, ticker: d.ticker, nome: d.nome, setor: d.setor ?? null, preco: d.preco ?? null });
   }
 
   excluir(id: number): void {

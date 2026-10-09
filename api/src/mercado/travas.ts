@@ -19,13 +19,21 @@ export class Travas {
     return { token, acaoId, preco, expiraEm: new Date(expiraEm).toISOString() };
   }
 
-  consumir(token: string, acaoId: number): number {
+  /** Valida a trava e devolve o preço travado, sem gastá-la (para checar saldo/posição antes). */
+  precoValido(token: string, acaoId: number): number {
     const trava = this.travas.get(token);
-    this.travas.delete(token);
     if (!trava || trava.acaoId !== acaoId || trava.expiraEm < this.agora().getTime()) {
+      this.travas.delete(token);
       throw new DomainError(409, 'COTACAO_EXPIRADA', 'A cotação travada expirou ou é inválida. Atualize e confirme novamente.');
     }
     return trava.preco;
+  }
+
+  /** Valida e gasta a trava (uso único). */
+  consumir(token: string, acaoId: number): number {
+    const preco = this.precoValido(token, acaoId);
+    this.travas.delete(token);
+    return preco;
   }
 
   private limparExpiradas(): void {

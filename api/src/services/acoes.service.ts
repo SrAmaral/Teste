@@ -1,7 +1,7 @@
 import type { Acao } from '@safra/shared';
 import { comUnicidade, DomainError, naoEncontrado } from '../errors';
 import type { AcoesRepository } from '../repositories/acoes.repository';
-import type { AcaoInput } from '../schemas/acoes';
+import type { AcaoInput, AtualizaAcaoInput } from '../schemas/acoes';
 
 const TICKER_DUPLICADO = 'Já existe uma ação com este ticker';
 
@@ -22,7 +22,7 @@ export class AcoesService {
     return comUnicidade(() => this.repo.inserir(dados), TICKER_DUPLICADO);
   }
 
-  atualizar(id: number, dados: AcaoInput): Acao {
+  atualizar(id: number, dados: AtualizaAcaoInput): Acao {
     this.obter(id);
     comUnicidade(() => this.repo.atualizar(id, dados), TICKER_DUPLICADO);
     return this.obter(id);

@@ -13,7 +13,9 @@ export const filtroExtratoSchema = z.object({
   tipo: z.enum(['DEPOSITO', 'COMPRA', 'VENDA']).optional(),
   de: dia.optional(),
   ate: dia.optional(),
-  ticker: z.string().trim().min(1).max(10).optional(),
+  ticker: z.string().trim().regex(/^[A-Za-z0-9]{1,10}$/, 'Use apenas letras e números').optional(),
+  /** Deslocamento do fuso do usuário em minutos (ex.: −180 para UTC−3), para filtrar o dia local. */
+  fuso: z.coerce.number().int().min(-840).max(840).optional(),
   ordem: z.enum(['data', 'valor']).default('data'),
   direcao: z.enum(['asc', 'desc']).default('desc'),
   pagina: z.coerce.number().int().min(1).default(1),
