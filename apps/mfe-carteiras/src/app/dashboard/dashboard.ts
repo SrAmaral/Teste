@@ -97,8 +97,8 @@ const sinal = (n: number) => (n > 0 ? '+' : n < 0 ? '−' : '');
     .lista { list-style: none; margin: 0; padding: 0; }
     .lista li { display: grid; grid-template-columns: 1fr auto 90px; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid #161c26; }
     .lista li:last-child { border-bottom: 0; }
-    .ticker { color: var(--tx-1); }
-    @media (max-width: 1100px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .grade, .grade.movimentos { grid-template-columns: 1fr; } }
+    .ticker { color: var(--tx-1); margin-right: 8px; }
+    @media (max-width: 1100px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .grade, .grade.movimentos { grid-template-columns: minmax(0, 1fr); } }
   `,
 })
 export class DashboardPage {

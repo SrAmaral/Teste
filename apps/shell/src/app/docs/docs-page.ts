@@ -46,7 +46,7 @@ import { renderizarMermaid } from './mermaid';
     .docs-indice h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .12em; color: var(--tx-3); margin: 8px 16px; }
     .docs-erro { color: var(--baixa); }
     @media (max-width: 900px) {
-      .docs { grid-template-columns: 1fr; }
+      .docs { grid-template-columns: minmax(0, 1fr); }
       .docs-indice { position: static; }
       .docs-conteudo { padding: 20px; }
     }

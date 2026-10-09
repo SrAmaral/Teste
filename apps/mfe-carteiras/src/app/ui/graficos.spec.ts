@@ -24,6 +24,13 @@ describe('geometria dos gráficos', () => {
   it('donut: um arco por valor positivo, nenhum quando o total é zero', () => {
     expect(arcosDonut([1, 1, 2], 50, 10, 60)).toHaveLength(3);
     expect(arcosDonut([0, 0], 50, 10, 60)).toEqual([]);
-    expect(arcosDonut([5], 50, 10, 60)[0]).toMatch(/^M.* A50 50 0 1 1 .* Z$/);
+    expect(arcosDonut([5], 50, 10, 60)[0]).toMatch(/^M.* A50 50 0 [01] 1 .* Z$/);
+  });
+
+  it('fatia única (100%) vira um anel visível: nenhum arco com início igual ao fim', () => {
+    const [caminho] = arcosDonut([5], 56, 14, 60);
+    const pontos = [...caminho.matchAll(/(?:M|L|A\S+ \S+ \S+ \S+ \S+ )(-?[\d.]+) (-?[\d.]+)/g)].map((m) => `${m[1]} ${m[2]}`);
+    for (let i = 1; i < pontos.length; i++) expect(pontos[i]).not.toBe(pontos[i - 1]);
+    expect(caminho.match(/A56 56/g)?.length).toBeGreaterThanOrEqual(2);
   });
 });

@@ -1,7 +1,10 @@
 :host {
   display: grid;
   grid-template-rows: 34px 1fr;
+  // minmax(0, 1fr): sem isso a coluna cresce até a largura do ticker (milhares de px) e empurra a página
+  grid-template-columns: minmax(0, 1fr);
   height: 100vh;
+  overflow: hidden;
 }
 
 .container {

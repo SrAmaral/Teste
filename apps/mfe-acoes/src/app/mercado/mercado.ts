@@ -83,7 +83,7 @@ export type Lado = 'COMPRAR' | 'VENDER';
     .lateral header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
     .ticker { color: var(--tx-1); font-size: 16px; display: block; }
     .preco { font-size: 22px; color: var(--tx-1); border-radius: 4px; padding: 0 4px; }
-    @media (max-width: 1100px) { .layout { grid-template-columns: 1fr; } .lateral { position: static; } }
+    @media (max-width: 1100px) { .layout { grid-template-columns: minmax(0, 1fr); } .lateral { position: static; } }
   `,
 })
 export class MercadoPage {

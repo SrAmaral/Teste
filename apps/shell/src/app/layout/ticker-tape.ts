@@ -26,6 +26,7 @@ import { CotacoesStore } from '../tempo-real/cotacoes-store';
     </div>
   `,
   styles: `
+    :host { display: block; min-width: 0; overflow: hidden; }
     .tape { display: flex; align-items: center; height: 34px; background: var(--sf-elev-1); border-bottom: 1px solid var(--sf-border); font-size: 12px; overflow: hidden; }
     .status { flex: none; padding: 0 14px; color: var(--tx-3); font: 600 11px var(--font-mono); letter-spacing: .08em; border-right: 1px solid var(--sf-border); }
     .status.vivo { color: var(--marca); }

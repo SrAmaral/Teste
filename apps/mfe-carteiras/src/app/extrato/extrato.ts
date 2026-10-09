@@ -92,7 +92,7 @@ const ROTULO_TIPO = { DEPOSITO: 'Depósito', COMPRA: 'Compra', VENDA: 'Venda' } 
   styles: `
     .filtros { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; padding: 14px 16px; margin-bottom: 12px; }
     label { display: flex; flex-direction: column; gap: 4px; color: var(--tx-3); font-size: 12px; }
-    select, input { height: 34px; padding: 0 10px; border-radius: var(--raio-sm); border: 1px solid var(--sf-border-strong); background: var(--sf-bg); color: var(--tx-1); font: 500 13px var(--font-sans); color-scheme: dark; }
+    select, input { box-sizing: border-box; height: 36px; padding: 0 10px; border-radius: var(--raio-sm); border: 1px solid var(--sf-border-strong); background: var(--sf-bg); color: var(--tx-1); font: 500 13px var(--font-sans); color-scheme: dark; }
     .tipo { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: rgb(139 151 168 / 15%); }
     .tipo[data-tipo='COMPRA'] { color: var(--baixa); background: rgb(239 68 68 / 10%); }
     .tipo[data-tipo='VENDA'] { color: var(--alta); background: rgb(34 197 94 / 10%); }

@@ -36,7 +36,7 @@ export function arcosDonut(valores: number[], raio: number, espessura: number, c
   let angulo = -Math.PI / 2;
   return valores.map((valor) => {
     const fatia = (Math.max(valor, 0) / total) * Math.PI * 2;
-    const caminho = arco(centro, raio, espessura, angulo, angulo + Math.min(fatia, Math.PI * 2 - 1e-4));
+    const caminho = arco(centro, raio, espessura, angulo, angulo + fatia);
     angulo += fatia;
     return caminho;
   });
@@ -44,7 +44,11 @@ export function arcosDonut(valores: number[], raio: number, espessura: number, c
 
 function arco(centro: number, raio: number, espessura: number, inicio: number, fim: number): string {
   const interno = raio - espessura;
-  const grande = fim - inicio > Math.PI ? 1 : 0;
+  const meio = (inicio + fim) / 2;
   const ponto = (r: number, a: number) => `${fmt(centro + r * Math.cos(a))} ${fmt(centro + r * Math.sin(a))}`;
-  return `M${ponto(raio, inicio)} A${raio} ${raio} 0 ${grande} 1 ${ponto(raio, fim)} L${ponto(interno, fim)} A${interno} ${interno} 0 ${grande} 0 ${ponto(interno, inicio)} Z`;
+  // Dois semiarcos (cada um ≤ 180°): um arco único de 360° teria início = fim e o SVG o descartaria.
+  return (
+    `M${ponto(raio, inicio)} A${raio} ${raio} 0 0 1 ${ponto(raio, meio)} A${raio} ${raio} 0 0 1 ${ponto(raio, fim)} ` +
+    `L${ponto(interno, fim)} A${interno} ${interno} 0 0 0 ${ponto(interno, meio)} A${interno} ${interno} 0 0 0 ${ponto(interno, inicio)} Z`
+  );
 }
