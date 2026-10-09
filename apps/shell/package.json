@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
+    "prestart": "node ../../scripts/sync-docs.mjs",
     "start": "ng serve",
+    "prebuild": "node ../../scripts/sync-docs.mjs",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
