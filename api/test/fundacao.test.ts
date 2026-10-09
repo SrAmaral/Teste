@@ -25,6 +25,20 @@ describe('fundação da API', () => {
     expect(res.body.code).toBe('JSON_INVALIDO');
   });
 
+  it('corpo grande demais retorna 413 e não 500', async () => {
+    const { api } = novaApi();
+    const res = await api.post('/api/carteiras').set('Content-Type', 'application/json').send(JSON.stringify({ nome: 'x'.repeat(200_000) }));
+    expect(res.status).toBe(413);
+    expect(res.body.code).toBe('CORPO_MUITO_GRANDE');
+  });
+
+  it('charset não suportado retorna 415 e não 500', async () => {
+    const { api } = novaApi();
+    const res = await api.post('/api/carteiras').set('Content-Type', 'application/json; charset=klingon').send('{"nome":"x"}');
+    expect(res.status).toBe(415);
+    expect(res.body.code).toBe('REQUISICAO_INVALIDA');
+  });
+
   it('libera CORS para o shell', async () => {
     const { api } = novaApi();
     const res = await api.get('/api/health').set('Origin', 'http://localhost:4200');
