@@ -1,7 +1,7 @@
 # Safra Invest Lab — Design (Micro Front-ends Angular)
 
 - **Data:** 2026-10-09
-- **Status:** Aprovado em brainstorming, aguardando revisão da spec
+- **Status:** Aprovado
 - **Contexto:** Teste técnico para processo seletivo no Banco Safra
 - **Prazo:** Entrega no mesmo dia (2026-10-09)
 
@@ -28,18 +28,19 @@ Os serviços persistem dados em **SQLite** através de uma API Node.
 
 | Camada | Escolha | Observação |
 |---|---|---|
-| Front-end | Angular **21.2** (standalone, signals, builder esbuild) | Angular 22 exige Node ≥ 22.22; ambiente local usa Node 20.19.4. Angular 21 suporta `^20.19.0`. |
-| Micro front-ends | `@angular-architects/native-federation` **21.2** | Caminho recomendado para Angular moderno (sem webpack). |
-| UI | Angular Material 21 | Tema customizado azul-marinho + dourado. |
-| Docs na Home | `ngx-markdown` + Mermaid | Renderiza `docs/*.md`. |
-| API | Node 20 + Express + TypeScript | Executada com `tsx`. |
+| Runtime | Node **24 LTS** (24.21) | Node 20 está em fim de vida (abr/2026); libs atuais exigem Node ≥ 22. |
+| Front-end | Angular **22.2** (standalone, signals, zoneless, builder esbuild) | Exige Node `^22.22.3 \|\| ^24.15.0`. |
+| Micro front-ends | `@angular-architects/native-federation` **22.2** | Caminho recomendado para Angular moderno (sem webpack). |
+| UI | Angular Material 22 | Tema customizado azul-marinho + dourado. |
+| Docs na Home | `ngx-markdown` 22 + Mermaid 11 (import dinâmico) | Renderiza `docs/*.md`. |
+| API | Node 24 + Express 5 + TypeScript | Executada com `tsx`. |
 | Banco | SQLite via `better-sqlite3` | Arquivo `api/data/safra.db`; `:memory:` nos testes. |
 | Validação | `zod` | Schemas compartilhados entre rotas. |
-| Testes API | `vitest` + `supertest` | |
-| Testes Angular | Runner padrão do Angular 21 (Vitest) | |
+| Testes API | `vitest` 4 + `supertest` | |
+| Testes Angular | Runner padrão do Angular 22 (Vitest) | |
 | Orquestração dev | npm workspaces + `concurrently` | |
 
-`.nvmrc` fixa `20.19`.
+`.nvmrc` fixa `24`; `engines.node` na raiz: `>=22.22.3`.
 
 ## 3. Arquitetura
 
@@ -84,7 +85,7 @@ flowchart LR
    - **Dados:** a API/SQLite é a fonte da verdade. `mfe-acoes` lê carteiras via `GET /api/carteiras`.
    - **Eventos:** após compra, `mfe-acoes` dispara `window.dispatchEvent(new CustomEvent('safra:compra-realizada', { detail }))`; shell escuta e exibe notificação.
    - **Navegação:** link "Ver carteira" navega para `/carteiras/:id` pelo router do shell.
-5. **Shared singleton:** `@angular/*`, `@angular/material`, `rxjs`, `@safra/shared`.
+5. **Shared singleton:** `@angular/*`, `@angular/material`, `@angular/cdk`, `rxjs`. `@safra/shared` é resolvido por `paths` do tsconfig e empacotado em cada app (`skip` na federação): contém só tipos e constantes, sem estado, então singleton é desnecessário e evita mapear código fora da pasta do app.
 6. **Resiliência:** falha no `loadRemoteModule` (remote fora do ar) → rota resolve para componente `RemoteIndisponivelComponent` no shell; app não quebra.
 7. **URL da API:** constante `API_BASE_URL` em `@safra/shared` (`http://localhost:3000/api`).
 
@@ -138,6 +139,7 @@ Valores monetários: `REAL`, arredondados a 2 casas na camada de serviço. (Simp
 | Compra usa `acoes.preco` atual, gravado em `preco_unitario` | histórico preservado |
 | Débito de saldo + insert da compra em uma transação | atomicidade |
 | Excluir carteira com compras | `409 CARTEIRA_COM_COMPRAS` |
+| Corpo JSON malformado | `400 JSON_INVALIDO` |
 | Excluir ação com compras | `409 ACAO_COM_COMPRAS` |
 | Nome de carteira / ticker duplicado | `409 DUPLICADO` |
 | Ticker fora de `^[A-Z]{4}\d{1,2}$`, quantidade ≤ 0, preço ≤ 0, depósito ≤ 0 | `400 VALIDACAO` com `details` |
