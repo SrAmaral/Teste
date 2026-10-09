@@ -1,6 +1,5 @@
 import { Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Router, RouterLink } from '@angular/router';
@@ -10,7 +9,7 @@ import { CarteirasApi } from '../data/carteiras-api';
 
 @Component({
   selector: 'app-carteira-form',
-  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatButtonModule],
+  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule],
   template: `
     <h1>{{ editando() ? 'Editar carteira' : 'Nova carteira' }}</h1>
     <form [formGroup]="form" (ngSubmit)="salvar()" class="formulario">
@@ -37,14 +36,14 @@ import { CarteirasApi } from '../data/carteiras-api';
       }
 
       <div class="botoes">
-        <a mat-button routerLink="/carteiras">Cancelar</a>
-        <button mat-flat-button type="submit" [disabled]="salvando()">Salvar</button>
+        <a class="btn" routerLink="/carteiras/lista">Cancelar</a>
+        <button class="btn btn-primario" type="submit" [disabled]="salvando()">Salvar</button>
       </div>
     </form>
   `,
   styles: `
     h1 { color: var(--tx-1); }
-    .formulario { display: flex; flex-direction: column; max-width: 520px; background: #fff; padding: 24px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); }
+    .formulario { display: flex; flex-direction: column; max-width: 520px; background: var(--sf-card); border: 1px solid var(--sf-border); padding: 24px; border-radius: var(--raio-md); }
     .botoes { display: flex; justify-content: flex-end; gap: 8px; }
   `,
 })

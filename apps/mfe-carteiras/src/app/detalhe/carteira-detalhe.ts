@@ -16,7 +16,7 @@ import { DepositoDialog } from './deposito-dialog';
   selector: 'app-carteira-detalhe',
   imports: [CurrencyPipe, DatePipe, DecimalPipe, RouterLink, MatButtonModule, MatCardModule, MatIconModule, MatProgressSpinnerModule, MatTableModule],
   template: `
-    <a mat-button routerLink="/carteiras"><mat-icon>arrow_back</mat-icon>Carteiras</a>
+    <a mat-button routerLink="/carteiras/lista"><mat-icon>arrow_back</mat-icon>Carteiras</a>
 
     @if (carregando()) {
       <div class="estado"><mat-spinner diameter="40" /></div>
