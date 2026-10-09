@@ -1,5 +1,7 @@
 # Safra Invest Lab
 
+**Repositório:** [github.com/SrAmaral/Teste](https://github.com/SrAmaral/Teste)
+
 Teste técnico: **micro front-ends Angular** (Native Federation) com shell, MFE de Carteiras e MFE de Ações, sobre uma API Express + SQLite.
 
 - **Mercado ao vivo:** cotações simuladas via SSE, boleta de compra/venda com trava de preço (RFQ) de 8 s.
@@ -10,6 +12,8 @@ Teste técnico: **micro front-ends Angular** (Native Federation) com shell, MFE 
 ## Rodar
 
 ```bash
+git clone https://github.com/SrAmaral/Teste.git
+cd Teste
 nvm use          # Node 24 (.nvmrc)
 npm install
 npm run dev      # http://localhost:4200

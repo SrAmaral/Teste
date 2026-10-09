@@ -2,6 +2,8 @@
 
 Aplicação de teste técnico que simula um pequeno domínio de investimentos em **arquitetura de micro front-ends Angular**.
 
+**Código-fonte:** [github.com/SrAmaral/Teste](https://github.com/SrAmaral/Teste)
+
 ## O que dá para fazer
 
 - **Dashboard** — patrimônio, caixa, resultado realizado e não realizado, evolução no pregão e alocação por setor, tudo recalculado ao vivo.

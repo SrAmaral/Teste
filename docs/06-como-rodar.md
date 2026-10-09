@@ -7,6 +7,8 @@
 ## Tudo junto
 
 ```bash
+git clone https://github.com/SrAmaral/Teste.git
+cd Teste
 npm install
 npm run dev
 ```
