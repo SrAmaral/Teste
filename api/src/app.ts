@@ -2,6 +2,9 @@ import cors from 'cors';
 import express from 'express';
 import type { DB } from './db/connection';
 import { rotaNaoEncontrada, tratarErros } from './middleware/error-handler';
+import { CarteirasRepository } from './repositories/carteiras.repository';
+import { rotasCarteiras } from './routes/carteiras.routes';
+import { CarteirasService } from './services/carteiras.service';
 
 export const ORIGENS_PERMITIDAS = ['http://localhost:4200', 'http://localhost:4201', 'http://localhost:4202'];
 
@@ -14,7 +17,10 @@ export function criarApp(db: DB) {
     res.json({ status: 'ok' });
   });
 
-  // rotas de domínio são registradas aqui nas Tasks 3–5
+  const carteirasRepo = new CarteirasRepository(db);
+  const carteiras = new CarteirasService(carteirasRepo);
+
+  app.use('/api/carteiras', rotasCarteiras(carteiras));
 
   app.use(rotaNaoEncontrada);
   app.use(tratarErros);
