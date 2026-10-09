@@ -9,7 +9,7 @@ export interface ConfirmacaoDados {
 }
 
 @Component({
-  selector: 'app-confirm-dialog',
+  selector: 'app-acoes-confirm-dialog',
   imports: [MatDialogModule, MatButtonModule],
   template: `
     <h2 mat-dialog-title>{{ dados.titulo }}</h2>

@@ -11,7 +11,7 @@
   "scripts": {
     "sync-docs": "node scripts/sync-docs.mjs",
     "predev": "npm run sync-docs",
-    "dev": "concurrently -k -n api,carteiras,acoes,shell -c blue,green,magenta,yellow \"npm run dev -w api\" \"npm run start -w mfe-carteiras\" \"npm run start -w mfe-acoes\" \"npm run start -w shell\"",
+    "dev": "concurrently -n api,carteiras,acoes,shell -c blue,green,magenta,yellow \"npm run dev -w api\" \"npm run start -w mfe-carteiras\" \"npm run start -w mfe-acoes\" \"npm run start -w shell\"",
     "prebuild": "npm run sync-docs",
     "build": "npm run build -w mfe-carteiras && npm run build -w mfe-acoes && npm run build -w shell",
     "test": "npm run test -w api && npm run test:ci -w shell && npm run test:ci -w mfe-carteiras && npm run test:ci -w mfe-acoes"

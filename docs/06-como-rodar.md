@@ -1,0 +1,40 @@
+# Como rodar
+
+## Pré-requisitos
+
+- Node **24 LTS** (ou ≥ 22.22.3). Com nvm: `nvm use` na raiz (lê `.nvmrc`).
+
+## Tudo junto
+
+```bash
+npm install
+npm run dev
+```
+
+Abra http://localhost:4200. O comando sobe API (3000), mfe-carteiras (4201), mfe-acoes (4202) e shell (4200). Na primeira execução a API cria `api/data/safra.db` com 8 ações e 2 carteiras de exemplo.
+
+> O npm 11 pede aprovação de *install scripts*. As aprovações necessárias (esbuild, better-sqlite3 etc.) já estão em `allowScripts` no `package.json` da raiz.
+
+## Cada peça sozinha
+
+```bash
+npm run dev -w api                 # API em http://localhost:3000/api
+npm run start -w mfe-carteiras     # http://localhost:4201/carteiras (standalone)
+npm run start -w mfe-acoes         # http://localhost:4202/acoes (standalone)
+npm run start -w shell             # http://localhost:4200
+```
+
+## Testes e build
+
+```bash
+npm test          # API (vitest + supertest) + 3 apps Angular (vitest)
+npm run build     # build de produção dos 3 front-ends
+```
+
+## Testar a resiliência
+
+Com tudo rodando, pare só o `mfe-acoes` e recarregue http://localhost:4200/acoes: aparece **Módulo indisponível**, e Home e Carteiras continuam funcionando.
+
+## Resetar os dados
+
+Pare a API e apague `api/data/`.
