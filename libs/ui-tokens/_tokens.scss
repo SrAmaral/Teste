@@ -1,0 +1,322 @@
+@use '@angular/material' as mat;
+
+/// Tema global "terminal + fintech": base escura, números mono, dourado como acento de marca.
+@mixin tema-global {
+  html {
+    color-scheme: dark;
+    @include mat.theme((
+      color: (theme-type: dark, primary: mat.$yellow-palette, tertiary: mat.$blue-palette),
+      typography: (plain-family: 'Inter', brand-family: 'Inter'),
+      density: -1,
+    ));
+
+    --sf-bg: #0b0e13;
+    --sf-elev-1: #0e1219;
+    --sf-card: #121821;
+    --sf-card-hover: #161d28;
+    --sf-border: #1e2530;
+    --sf-border-strong: #2a3340;
+    --tx-1: #ffffff;
+    --tx-2: #d7dee8;
+    --tx-3: #8b97a8;
+    --alta: #22c55e;
+    --baixa: #ef4444;
+    --marca: #c9a24b;
+    --marca-forte: #d6b25e;
+    --info: #3b82f6;
+    --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+    --raio-sm: 6px;
+    --raio-md: 10px;
+    --raio-lg: 14px;
+    --sombra: 0 1px 2px rgb(0 0 0 / 40%), 0 8px 24px rgb(0 0 0 / 25%);
+    --dur-rapida: 120ms;
+    --dur-media: 200ms;
+
+    // Material herda os tokens (dialogs, selects, menus, snackbars, tabs, campos)
+    --mat-sys-surface: var(--sf-card);
+    --mat-sys-surface-container-lowest: var(--sf-bg);
+    --mat-sys-surface-container-low: var(--sf-elev-1);
+    --mat-sys-surface-container: var(--sf-card);
+    --mat-sys-surface-container-high: var(--sf-card-hover);
+    --mat-sys-surface-container-highest: #1a2230;
+    --mat-sys-on-surface: var(--tx-2);
+    --mat-sys-on-surface-variant: var(--tx-3);
+    --mat-sys-outline: var(--sf-border-strong);
+    --mat-sys-outline-variant: var(--sf-border);
+    --mat-sys-primary: var(--marca);
+    --mat-sys-on-primary: #0b0e13;
+    --mat-sys-error: var(--baixa);
+  }
+
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--sf-bg);
+    color: var(--tx-2);
+    font: 400 14px/1.5 var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a {
+    color: var(--marca);
+    text-decoration: none;
+  }
+
+  h1,
+  h2,
+  h3 {
+    color: var(--tx-1);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+  .alta {
+    color: var(--alta);
+  }
+  .baixa {
+    color: var(--baixa);
+  }
+  .neutro {
+    color: var(--tx-3);
+  }
+
+  .sf-card {
+    background: var(--sf-card);
+    border: 1px solid var(--sf-border);
+    border-radius: var(--raio-md);
+  }
+
+  .pagina-cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+    p {
+      margin: 4px 0 0;
+      color: var(--tx-3);
+    }
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 34px;
+    padding: 0 14px;
+    border: 1px solid var(--sf-border-strong);
+    border-radius: var(--raio-sm);
+    background: transparent;
+    color: var(--tx-1);
+    font: 500 13px var(--font-sans);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background var(--dur-rapida), border-color var(--dur-rapida), opacity var(--dur-rapida);
+    &:hover:not(:disabled) {
+      background: rgb(255 255 255 / 5%);
+      border-color: var(--tx-3);
+    }
+    &:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+  .btn-primario {
+    background: var(--marca);
+    border-color: var(--marca);
+    color: #0b0e13;
+    &:hover:not(:disabled) {
+      background: var(--marca-forte);
+      border-color: var(--marca-forte);
+    }
+  }
+  .btn-compra {
+    background: var(--alta);
+    border-color: var(--alta);
+    color: #04140a;
+    font-weight: 600;
+  }
+  .btn-venda {
+    background: var(--baixa);
+    border-color: var(--baixa);
+    color: #1a0505;
+    font-weight: 600;
+  }
+  .btn-icone {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-color: transparent;
+  }
+
+  .tabela-container {
+    overflow-x: auto;
+  }
+  .tabela {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13px;
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: var(--sf-card);
+      text-align: left;
+      font: 500 11px var(--font-sans);
+      color: var(--tx-3);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--sf-border);
+      white-space: nowrap;
+    }
+    th button {
+      all: unset;
+      cursor: pointer;
+      &:focus-visible {
+        outline: 2px solid var(--marca);
+      }
+    }
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #161c26;
+      white-space: nowrap;
+    }
+    tbody tr {
+      transition: background var(--dur-rapida);
+    }
+    tbody tr:hover td {
+      background: rgb(255 255 255 / 2.5%);
+    }
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+    .direita {
+      text-align: right;
+    }
+    .ticker {
+      color: var(--tx-1);
+      font-weight: 600;
+    }
+    .sub {
+      display: block;
+      color: var(--tx-3);
+      font-size: 11px;
+    }
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    font: 500 12px var(--font-mono);
+    background: rgb(139 151 168 / 15%);
+    color: var(--tx-3);
+  }
+  .badge-alta {
+    background: rgb(34 197 94 / 12%);
+    color: var(--alta);
+  }
+  .badge-baixa {
+    background: rgb(239 68 68 / 12%);
+    color: var(--baixa);
+  }
+
+  .flash-alta {
+    animation: flash-alta 600ms ease-out;
+  }
+  .flash-baixa {
+    animation: flash-baixa 600ms ease-out;
+  }
+  @keyframes flash-alta {
+    from {
+      background: rgb(34 197 94 / 35%);
+    }
+    to {
+      background: transparent;
+    }
+  }
+  @keyframes flash-baixa {
+    from {
+      background: rgb(239 68 68 / 35%);
+    }
+    to {
+      background: transparent;
+    }
+  }
+
+  .skeleton {
+    display: block;
+    border-radius: var(--raio-sm);
+    background: linear-gradient(90deg, #161d28 25%, #202a39 37%, #161d28 63%);
+    background-size: 400% 100%;
+    animation: shimmer 1.4s ease infinite;
+  }
+  @keyframes shimmer {
+    from {
+      background-position: 100% 50%;
+    }
+    to {
+      background-position: 0 50%;
+    }
+  }
+
+  .snack-erro {
+    --mat-snack-bar-container-color: #2a1416;
+    --mat-snack-bar-supporting-text-color: #ffd5d5;
+    --mat-snack-bar-button-color: var(--baixa);
+  }
+  .snack-sucesso {
+    --mat-snack-bar-container-color: #10241a;
+    --mat-snack-bar-supporting-text-color: #d1fadf;
+    --mat-snack-bar-button-color: var(--alta);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--marca);
+    outline-offset: 2px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--sf-border-strong);
+    border-radius: 10px;
+    border: 2px solid var(--sf-bg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}
