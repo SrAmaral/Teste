@@ -5,6 +5,7 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { Cotacao } from '@safra/shared';
 import { of } from 'rxjs';
+import { AcoesApi } from '../data/acoes-api';
 import { CotacoesStore } from '../ui/cotacoes-store';
 import { MercadoPage } from './mercado';
 
@@ -23,6 +24,8 @@ describe('MercadoPage', () => {
         provideRouter([]),
         { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap(query) }, queryParamMap: of(convertToParamMap(query)) } },
         { provide: CotacoesStore, useValue: { lista, status: signal('ao-vivo'), cotacoes: signal(new Map()) } },
+        // a boleta (filha) consulta carteiras, posições e trava — irrelevante para estes testes
+        { provide: AcoesApi, useValue: { carteiras: () => of([]), posicoes: () => of([]), travar: () => of({ token: 't', acaoId: 1, preco: 10, expiraEm: new Date(Date.now() + 8000).toISOString() }) } },
         { provide: LOCALE_ID, useValue: 'pt-BR' },
         { provide: DEFAULT_CURRENCY_CODE, useValue: 'BRL' },
       ],

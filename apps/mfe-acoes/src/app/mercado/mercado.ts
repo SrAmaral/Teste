@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Cotacao } from '@safra/shared';
+import { Boleta } from '../boleta/boleta';
 import { CotacoesStore } from '../ui/cotacoes-store';
 import { EstadoVazio } from '../ui/estado-vazio';
 import { FlashDirective } from '../ui/flash.directive';
@@ -13,7 +14,7 @@ export type Lado = 'COMPRAR' | 'VENDER';
 
 @Component({
   selector: 'app-mercado',
-  imports: [DecimalPipe, RouterLink, MatIconModule, Sparkline, Variacao, FlashDirective, EstadoVazio],
+  imports: [DecimalPipe, RouterLink, MatIconModule, Sparkline, Variacao, FlashDirective, EstadoVazio, Boleta],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <header class="pagina-cabecalho">
@@ -58,7 +59,7 @@ export type Lado = 'COMPRAR' | 'VENDER';
             <div><strong class="ticker">{{ acao.ticker }}</strong><span class="sub">{{ acao.nome }}</span></div>
             <strong class="num preco" [appFlash]="acao.preco">{{ acao.preco | number: '1.2-2' }}</strong>
           </header>
-          <!-- boleta entra na Task 13 -->
+          <app-boleta [acao]="acao" [(lado)]="ladoModelo" [carteiraInicial]="carteiraInicial()" />
         } @else {
           <app-estado-vazio icone="touch_app" titulo="Selecione uma ação" />
         }
@@ -90,6 +91,8 @@ export class MercadoPage {
   readonly busca = signal('');
   readonly lado = signal<Lado>(this.consulta.get('lado') === 'VENDER' ? 'VENDER' : 'COMPRAR');
   readonly carteiraInicial = signal<number | null>(Number(this.consulta.get('carteira')) || null);
+  /** O mesmo signal, exposto para two-way binding com a boleta. */
+  protected readonly ladoModelo = this.lado;
   private readonly selecionadaId = signal<number | null>(null);
   private readonly tickerInicial = this.consulta.get('ticker')?.toUpperCase() ?? null;
 
