@@ -44,11 +44,12 @@ erDiagram
 | Excluir carteira/ação com compras | `409 CARTEIRA_COM_COMPRAS` / `409 ACAO_COM_COMPRAS` |
 | Nome de carteira ou ticker repetido | `409 DUPLICADO` |
 | Ticker | `^[A-Z]{4}\d{1,2}$`, normalizado para maiúsculas |
+| Valores em reais | no máximo 2 casas decimais; preço e depósito ≥ R$ 0,01; teto de R$ 1 trilhão |
 | Dados inválidos | `400 VALIDACAO` com `details: [{ campo, mensagem }]` |
 | JSON malformado | `400 JSON_INVALIDO` |
 | Recurso inexistente | `404 NAO_ENCONTRADO` |
 
-Formato de erro: `{ "code": "...", "message": "...", "details": ... }`.
+Formato de erro: `{ "code": "...", "message": "...", "details": ... }`. Datas são devolvidas em ISO 8601 UTC (`2026-10-09T18:28:38Z`).
 
 ## Endpoints
 

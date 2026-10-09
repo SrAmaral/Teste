@@ -34,9 +34,9 @@ Documento único com stack, arquitetura, modelo de dados, regras, telas, testes 
 Skill `superpowers:writing-plans`: 12 tarefas com arquivos exatos, código completo, testes escritos antes da implementação e commits por tarefa. Inclui uma seção **Review Focus** com os 5 casos de borda mais prováveis (centavos, ticker minúsculo, IDs inválidos, JSON malformado, quantidade fracionada), cada um com teste dedicado.
 
 ### 4. Execução
-As tarefas foram implementadas em sequência na mesma sessão (skill `superpowers:executing-plans`), com um *ledger* de progresso e uma revisão final do branch inteiro feita por um revisor independente.
+As tarefas foram implementadas em sequência na mesma sessão (skill `superpowers:executing-plans`), com um *ledger* de progresso e uma revisão final do branch inteiro feita por um revisor independente (outro agente, sem o contexto da implementação). A revisão apontou que a API aceitava preços abaixo de um centavo (compra "de graça") e datas fora do padrão ISO, que poderiam falhar no Safari. Os dois pontos foram corrigidos com testes que falharam antes da correção.
 
-Em toda tarefa: **teste falhando → implementação mínima → teste passando → commit**. O histórico do git (`git log`) mostra essa sequência.
+Em toda tarefa: **teste falhando → implementação mínima → teste passando → commit**. O ciclo vermelho → verde foi verificado pela execução dos testes a cada passo; o histórico do git (`git log`) tem um commit por tarefa, já com teste e implementação.
 
 Quando a realidade divergiu do plano, a IA registrou uma decisão ("ruling") e seguiu — por exemplo: o Native Federation 22 gerou um formato de configuração diferente do previsto, e o compartilhamento do locale `pt-BR` exigiu um ajuste (ver [Decisões técnicas](05-decisoes.md)).
 

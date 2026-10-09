@@ -1,5 +1,6 @@
 import type { Carteira, CarteiraResumo } from '@safra/shared';
 import type { DB } from '../db/connection';
+import { paraIsoUtc } from '../datas';
 import { arredondar } from '../dinheiro';
 
 interface CarteiraLinha {
@@ -20,7 +21,7 @@ const paraCarteira = (l: CarteiraLinha): Carteira => ({
   nome: l.nome,
   descricao: l.descricao,
   saldo: l.saldo,
-  criadoEm: l.criado_em,
+  criadoEm: paraIsoUtc(l.criado_em),
 });
 
 export class CarteirasRepository {

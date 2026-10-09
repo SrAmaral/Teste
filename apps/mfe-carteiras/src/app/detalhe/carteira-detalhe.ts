@@ -63,7 +63,7 @@ import { DepositoDialog } from './deposito-dialog';
       } @else {
         <div class="tabela">
           <table mat-table [dataSource]="compras()">
-            <ng-container matColumnDef="data"><th mat-header-cell *matHeaderCellDef>Data</th><td mat-cell *matCellDef="let co">{{ co.data + 'Z' | date: 'dd/MM/yyyy HH:mm' }}</td></ng-container>
+            <ng-container matColumnDef="data"><th mat-header-cell *matHeaderCellDef>Data</th><td mat-cell *matCellDef="let co">{{ co.data | date: 'dd/MM/yyyy HH:mm' }}</td></ng-container>
             <ng-container matColumnDef="ticker"><th mat-header-cell *matHeaderCellDef>Ticker</th><td mat-cell *matCellDef="let co">{{ co.ticker }}</td></ng-container>
             <ng-container matColumnDef="quantidade"><th mat-header-cell *matHeaderCellDef>Qtd.</th><td mat-cell *matCellDef="let co">{{ co.quantidade | number }}</td></ng-container>
             <ng-container matColumnDef="precoUnitario"><th mat-header-cell *matHeaderCellDef>Preço</th><td mat-cell *matCellDef="let co">{{ co.precoUnitario | currency }}</td></ng-container>

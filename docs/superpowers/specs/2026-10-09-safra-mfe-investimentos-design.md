@@ -212,7 +212,7 @@ Renderiza `docs/*.md` com `ngx-markdown` (Mermaid habilitado), com índice later
 2. `02-arquitetura.md` (diagramas de MFE e runtime)
 3. `03-estrutura.md` (árvore de pastas comentada)
 4. `04-dados-e-api.md`
-5. `05-decisoes.md` (mini-ADRs: Native Federation, Angular 21, Express + SQLite, Material, monorepo, posição calculada)
+5. `05-decisoes.md` (mini-ADRs: Native Federation, Angular 22, Express + SQLite, Material, monorepo, posição calculada)
 6. `06-como-rodar.md`
 7. `07-uso-de-ia.md` (fluxo brainstorming → spec → plano → implementação; o que a IA gerou vs. o que foi revisado; prompts-chave; links para spec e plano)
 
@@ -262,7 +262,7 @@ Abas (`mat-tab-group`):
 ## 8. Entrega
 
 - Repositório git com commits por etapa (histórico também documenta o processo com IA).
-- `README.md` raiz: resumo, pré-requisitos (Node 20.19+), `npm install && npm run dev`, portas, link para `docs/`.
+- `README.md` raiz: resumo, pré-requisitos (Node 24 LTS), `npm install && npm run dev`, portas, link para `docs/`.
 - Scripts raiz: `dev` (API + 2 MFEs + shell via `concurrently`), `test` (API + apps), `build`.
 - Push para GitHub somente com aprovação explícita.
 

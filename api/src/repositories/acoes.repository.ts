@@ -1,4 +1,5 @@
 import type { Acao } from '@safra/shared';
+import { paraIsoUtc } from '../datas';
 import type { DB } from '../db/connection';
 import type { AcaoInput } from '../schemas/acoes';
 
@@ -17,7 +18,7 @@ const paraAcao = (l: AcaoLinha): Acao => ({
   nome: l.nome,
   setor: l.setor,
   preco: l.preco,
-  atualizadoEm: l.atualizado_em,
+  atualizadoEm: paraIsoUtc(l.atualizado_em),
 });
 
 export class AcoesRepository {

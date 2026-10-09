@@ -1,5 +1,6 @@
 import type { Compra, Posicao } from '@safra/shared';
 import type { DB } from '../db/connection';
+import { paraIsoUtc } from '../datas';
 import { arredondar } from '../dinheiro';
 
 interface CompraLinha {
@@ -35,7 +36,7 @@ const paraCompra = (l: CompraLinha): Compra => ({
   quantidade: l.quantidade,
   precoUnitario: l.preco_unitario,
   total: l.total,
-  data: l.data,
+  data: paraIsoUtc(l.data),
 });
 
 export class ComprasRepository {

@@ -42,7 +42,7 @@ Formato curto de ADR: contexto → decisão → consequência.
 - **Consequência:** nada de dado duplicado para sincronizar; preço médio sempre consistente.
 
 ## Dinheiro em `REAL` com arredondamento a 2 casas
-- **Decisão:** simplificação aceitável para o teste; todo cálculo passa por `arredondar()`.
+- **Decisão:** simplificação aceitável para o teste. A API só aceita valores com até 2 casas decimais (preço ≥ R$ 0,01, teto de R$ 1 trilhão) e todo cálculo passa por `arredondar()`.
 - **Consequência:** casos como 3 × 33,33 são testados. Em produção, usar centavos inteiros ou decimal.
 
 ## Angular Material com tema próprio
