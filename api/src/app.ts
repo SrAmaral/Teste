@@ -4,6 +4,7 @@ import type { DB } from './db/connection';
 import { rotaNaoEncontrada, tratarErros } from './middleware/error-handler';
 import { AcoesRepository } from './repositories/acoes.repository';
 import { CarteirasRepository } from './repositories/carteiras.repository';
+import { DepositosRepository } from './repositories/depositos.repository';
 import { ComprasRepository } from './repositories/compras.repository';
 import { rotasAcoes } from './routes/acoes.routes';
 import { rotasCarteiras } from './routes/carteiras.routes';
@@ -26,7 +27,7 @@ export function criarApp(db: DB, opcoes: { pastaWeb?: string } = {}) {
 
   const carteirasRepo = new CarteirasRepository(db);
   const acoesRepo = new AcoesRepository(db);
-  const carteiras = new CarteirasService(carteirasRepo);
+  const carteiras = new CarteirasService(db, carteirasRepo, new DepositosRepository(db));
   const acoes = new AcoesService(acoesRepo);
   const compras = new ComprasService(db, carteirasRepo, acoesRepo, new ComprasRepository(db));
 

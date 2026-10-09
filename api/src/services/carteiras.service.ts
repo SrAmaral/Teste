@@ -1,13 +1,19 @@
 import type { Carteira, CarteiraResumo } from '@safra/shared';
+import type { DB } from '../db/connection';
 import { arredondar } from '../dinheiro';
 import { comUnicidade, DomainError, naoEncontrado } from '../errors';
 import type { CarteirasRepository } from '../repositories/carteiras.repository';
+import type { DepositosRepository } from '../repositories/depositos.repository';
 import type { AtualizaCarteiraInput, NovaCarteiraInput } from '../schemas/carteiras';
 
 const NOME_DUPLICADO = 'Já existe uma carteira com este nome';
 
 export class CarteirasService {
-  constructor(private readonly repo: CarteirasRepository) {}
+  constructor(
+    private readonly db: DB,
+    private readonly repo: CarteirasRepository,
+    private readonly depositos: DepositosRepository,
+  ) {}
 
   listar(): CarteiraResumo[] {
     return this.repo.listarResumo();
@@ -41,8 +47,11 @@ export class CarteirasService {
   }
 
   depositar(id: number, valor: number): Carteira {
-    const carteira = this.obter(id);
-    this.repo.atualizarSaldo(id, arredondar(carteira.saldo + valor));
-    return this.obter(id);
+    return this.db.transaction(() => {
+      const carteira = this.obter(id);
+      this.repo.atualizarSaldo(id, arredondar(carteira.saldo + valor));
+      this.depositos.inserir(id, valor);
+      return this.obter(id);
+    })();
   }
 }
