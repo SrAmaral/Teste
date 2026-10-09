@@ -2,8 +2,9 @@ import { Router } from 'express';
 import { idSchema } from '../schemas/comum';
 import { atualizaCarteiraSchema, depositoSchema, novaCarteiraSchema } from '../schemas/carteiras';
 import type { CarteirasService } from '../services/carteiras.service';
+import type { ComprasService } from '../services/compras.service';
 
-export function rotasCarteiras(carteiras: CarteirasService): Router {
+export function rotasCarteiras(carteiras: CarteirasService, compras: ComprasService): Router {
   const rotas = Router();
 
   rotas.get('/', (_req, res) => {
@@ -25,6 +26,10 @@ export function rotasCarteiras(carteiras: CarteirasService): Router {
   rotas.delete('/:id', (req, res) => {
     carteiras.excluir(idSchema.parse(req.params.id));
     res.status(204).end();
+  });
+
+  rotas.get('/:id/posicoes', (req, res) => {
+    res.json(compras.posicoes(idSchema.parse(req.params.id)));
   });
 
   rotas.post('/:id/deposito', (req, res) => {
