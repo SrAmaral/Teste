@@ -51,16 +51,16 @@ Formato curto de ADR: contexto → decisão → consequência.
 ## SSE em vez de WebSocket ou polling
 - **Contexto:** as cotações só fluem do servidor para o navegador.
 - **Decisão:** Server-Sent Events (`EventSource`) em `/api/cotacoes/stream`.
-- **Consequência:** nativo no navegador, reconexão automática, sem biblioteca; passa pelo proxy do `ng serve` e pelo container único.
+- **Consequência:** nativo no navegador, reconexão automática, sem biblioteca; passa pelo proxy do `ng serve` e pelo container único. Quando o `EventSource` desiste (ex.: proxy devolvendo 502 enquanto a API reinicia), o `CotacoesStore` recria a conexão com espera exponencial. Cada tela que usa cotações provê o seu store: a conexão abre ao entrar e fecha ao sair, então ficam no máximo duas (shell + tela atual).
 
 ## Mercado simulado (random walk log-normal)
 - **Decisão:** a cada segundo, `preço × e^(σ·Z)` com `Z ~ N(0,1)` (Box–Muller), arredondado a centavos; gerador aleatório e relógio injetáveis.
-- **Consequência:** comportamento realista e **testes determinísticos** (mesma semente → mesma série). O histórico intraday fica em memória: o "pregão" reinicia junto com a API.
+- **Consequência:** comportamento realista e **testes determinísticos** (mesma semente → mesma série). O histórico intraday fica em memória: o "pregão" reinicia junto com a API. Um preço alterado fora do simulador (edição no catálogo) vira a nova abertura, para a variação do dia não saltar; um erro num tick é registrado e nunca derruba o processo.
 
 ## Trava de cotação (RFQ) de 8 s
 - **Contexto:** com preço mudando a cada segundo, o usuário poderia pagar diferente do que viu.
 - **Decisão:** `POST /cotacoes/:id/trava` devolve um token de uso único válido por 8 s; a ordem com token executa no preço travado, senão `409 COTACAO_EXPIRADA` e a boleta renova a trava.
-- **Consequência:** o padrão de mesa de operações (*request for quote*), com contagem regressiva visível na boleta.
+- **Consequência:** o padrão de mesa de operações (*request for quote*), com contagem regressiva visível na boleta (medida no relógio do navegador a partir do recebimento). A trava só é gasta quando a ordem passa nas validações de saldo/posição.
 
 ## Migrações versionadas
 - **Decisão:** lista ordenada de migrações aplicadas em transação conforme `PRAGMA user_version`.

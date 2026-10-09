@@ -85,14 +85,14 @@ Formato de erro: `{ "code": "...", "message": "...", "details": ... }`. Datas s�
 | GET | `/api/carteiras/:id/posicoes` | — |
 | POST | `/api/carteiras/:id/deposito` | `{ valor }` |
 | GET / POST | `/api/acoes` | `?ticker=` / `{ ticker, nome, setor?, preco }` |
-| GET / PUT / DELETE | `/api/acoes/:id` | PUT: `{ ticker, nome, setor?, preco }` |
+| GET / PUT / DELETE | `/api/acoes/:id` | PUT: `{ ticker, nome, setor?, preco? }` — sem `preco`, mantém o preço vivo do mercado |
 | GET | `/api/compras` | `?carteiraId=` |
 | POST | `/api/compras` | `{ carteiraId, acaoId, quantidade, travaToken? }` → `{ compra, saldoRestante }` |
 | POST | `/api/vendas` | `{ carteiraId, acaoId, quantidade, travaToken? }` → `{ venda, saldoRestante }` |
 | GET | `/api/cotacoes` | foto atual: `[{ acaoId, ticker, preco, abertura, variacao, historico[] }]` |
 | GET | `/api/cotacoes/stream` | **SSE**: `event: snapshot` ao conectar, `event: cotacoes` a cada tick (1 s), heartbeat a cada 15 s |
 | POST | `/api/cotacoes/:acaoId/trava` | → `{ token, acaoId, preco, expiraEm }` (vale 8 s, uso único) |
-| GET | `/api/extrato` | `?carteiraId&tipo=DEPOSITO\|COMPRA\|VENDA&de&ate&ticker&ordem=data\|valor&direcao=asc\|desc&pagina&tamanho` → `{ itens, total, pagina, tamanho }` |
+| GET | `/api/extrato` | `?carteiraId&tipo=DEPOSITO\|COMPRA\|VENDA&de&ate&fuso&ticker&ordem=data\|valor&direcao=asc\|desc&pagina&tamanho` (`fuso` em minutos, ex. −180: o período usa o dia local do usuário; `ticker` só letras e números) → `{ itens, total, pagina, tamanho }` |
 | GET | `/api/dashboard` | `?carteiraId` (sem = consolidado) → KPIs, alocação, série intraday, maiores altas/baixas, posições |
 
 ## Exemplo

@@ -16,6 +16,8 @@ export type Lado = 'COMPRAR' | 'VENDER';
   selector: 'app-mercado',
   imports: [DecimalPipe, RouterLink, MatIconModule, Sparkline, Variacao, FlashDirective, EstadoVazio, Boleta],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  // Stream aberto só enquanto a tela existe (fecha ao navegar para outro MFE).
+  providers: [CotacoesStore],
   template: `
     <header class="pagina-cabecalho">
       <div><h1>Mercado</h1><p>Cotações simuladas em tempo real · clique em uma ação para negociar.</p></div>

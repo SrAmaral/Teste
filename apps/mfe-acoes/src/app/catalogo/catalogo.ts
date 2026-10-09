@@ -3,10 +3,11 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
-import { Acao, NovaAcao } from '@safra/shared';
+import { Acao, AtualizaAcao, NovaAcao } from '@safra/shared';
 import { filter, finalize, switchMap } from 'rxjs';
 import { AcoesApi } from '../data/acoes-api';
 import { ConfirmDialog, ConfirmacaoDados } from '../shared/confirm-dialog';
+import { CotacoesStore } from '../ui/cotacoes-store';
 import { EstadoVazio } from '../ui/estado-vazio';
 import { AcaoDialog } from './acao-dialog';
 
@@ -14,6 +15,8 @@ import { AcaoDialog } from './acao-dialog';
   selector: 'app-catalogo',
   imports: [CurrencyPipe, RouterLink, MatIconModule, EstadoVazio],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  // preço vivo do mercado; stream aberto só enquanto a tela existe
+  providers: [CotacoesStore],
   template: `
     <a class="voltar" routerLink="/acoes"><mat-icon>arrow_back</mat-icon>Mercado</a>
     <header class="pagina-cabecalho">
@@ -48,7 +51,7 @@ import { AcaoDialog } from './acao-dialog';
                   <td class="ticker">{{ a.ticker }}</td>
                   <td>{{ a.nome }}</td>
                   <td class="neutro">{{ a.setor ?? '—' }}</td>
-                  <td class="direita num">{{ a.preco | currency }}</td>
+                  <td class="direita num">{{ precoVivo(a) | currency }}</td>
                   <td class="direita">
                     <button class="btn btn-icone" type="button" (click)="abrir(a)" aria-label="Editar"><mat-icon>edit</mat-icon></button>
                     <button class="btn btn-icone" type="button" (click)="excluir(a)" aria-label="Excluir"><mat-icon>delete</mat-icon></button>
@@ -74,6 +77,7 @@ import { AcaoDialog } from './acao-dialog';
 export class Catalogo {
   private readonly api = inject(AcoesApi);
   private readonly dialog = inject(MatDialog);
+  private readonly cotacoes = inject(CotacoesStore).cotacoes;
 
   readonly acoes = signal<Acao[]>([]);
   readonly filtro = signal('');
@@ -90,6 +94,11 @@ export class Catalogo {
     this.carregar();
   }
 
+  /** O cadastro guarda o último preço gravado; a tela mostra o do stream quando disponível. */
+  precoVivo(acao: Acao): number {
+    return this.cotacoes().get(acao.id)?.preco ?? acao.preco;
+  }
+
   carregar(): void {
     this.carregando.set(true);
     this.erro.set(false);
@@ -101,11 +110,11 @@ export class Catalogo {
 
   abrir(acao: Acao | null): void {
     this.dialog
-      .open<AcaoDialog, Acao | null, NovaAcao>(AcaoDialog, { data: acao, width: '440px' })
+      .open<AcaoDialog, Acao | null, NovaAcao | AtualizaAcao>(AcaoDialog, { data: acao && { ...acao, preco: this.precoVivo(acao) }, width: '440px' })
       .afterClosed()
       .pipe(
-        filter((dados): dados is NovaAcao => !!dados),
-        switchMap((dados) => (acao ? this.api.atualizar(acao.id, dados) : this.api.criar(dados))),
+        filter((dados): dados is NovaAcao | AtualizaAcao => !!dados),
+        switchMap((dados) => (acao ? this.api.atualizar(acao.id, dados) : this.api.criar(dados as NovaAcao))),
       )
       .subscribe({ next: () => this.carregar(), error: () => undefined });
   }

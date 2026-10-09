@@ -41,6 +41,9 @@ export interface NovaAcao {
   preco: number;
 }
 
+/** Edição de ação: sem preço, mantém o preço vivo do mercado. */
+export type AtualizaAcao = Omit<NovaAcao, 'preco'> & { preco?: number };
+
 export interface Compra {
   id: number;
   carteiraId: number;

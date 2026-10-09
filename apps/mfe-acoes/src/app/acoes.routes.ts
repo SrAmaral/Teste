@@ -5,7 +5,6 @@ import { DEFAULT_CURRENCY_CODE, LOCALE_ID } from '@angular/core';
 import { Routes } from '@angular/router';
 import { Catalogo } from './catalogo/catalogo';
 import { MercadoPage } from './mercado/mercado';
-import { CotacoesStore } from './ui/cotacoes-store';
 import { AcoesApi } from './data/acoes-api';
 import { apiErrorInterceptor } from './data/api-error.interceptor';
 
@@ -17,7 +16,6 @@ export const ACOES_ROUTES: Routes = [
     path: '',
     providers: [
       AcoesApi,
-      CotacoesStore,
       provideHttpClient(withFetch(), withInterceptors([apiErrorInterceptor])),
       { provide: LOCALE_ID, useValue: 'pt-BR' },
       { provide: DEFAULT_CURRENCY_CODE, useValue: 'BRL' },

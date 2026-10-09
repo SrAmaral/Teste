@@ -21,9 +21,9 @@ const TTL_MS = 8000;
   imports: [CurrencyPipe, DecimalPipe, RouterLink, MatIconModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="lados" role="tablist" aria-label="Lado da ordem">
-      <button type="button" role="tab" [attr.aria-selected]="lado() === 'COMPRAR'" [class.ativo-compra]="lado() === 'COMPRAR'" (click)="trocarLado('COMPRAR')">Comprar</button>
-      <button type="button" role="tab" [attr.aria-selected]="lado() === 'VENDER'" [class.ativo-venda]="lado() === 'VENDER'" (click)="trocarLado('VENDER')">Vender</button>
+    <div class="lados" role="group" aria-label="Lado da ordem">
+      <button type="button" [attr.aria-pressed]="lado() === 'COMPRAR'" [class.ativo-compra]="lado() === 'COMPRAR'" (click)="trocarLado('COMPRAR')">Comprar</button>
+      <button type="button" [attr.aria-pressed]="lado() === 'VENDER'" [class.ativo-venda]="lado() === 'VENDER'" (click)="trocarLado('VENDER')">Vender</button>
     </div>
 
     <label class="campo">Carteira
@@ -42,7 +42,7 @@ const TTL_MS = 8000;
       <small id="maximo" class="neutro">{{ lado() === 'COMPRAR' ? 'Máximo pelo saldo' : 'Posição disponível' }}: <span class="num">{{ maximo() }}</span></small>
     </label>
 
-    <dl class="resumo num">
+    <dl class="resumo num" aria-live="polite">
       <div><dt>Preço {{ trava() && !expirada() ? 'travado' : 'de mercado' }}</dt><dd>{{ preco() | number: '1.2-2' }}</dd></div>
       <div><dt>Total</dt><dd class="destaque">{{ resumo().total | currency }}</dd></div>
       <div><dt>Saldo após</dt><dd [class.baixa]="resumo().saldoApos < 0">{{ resumo().saldoApos | currency }}</dd></div>

@@ -44,4 +44,18 @@ describe('AcaoDialog', () => {
     const c = await montar({ id: 1, ticker: 'VALE3', nome: 'Vale ON', setor: 'Mineração', preco: 61.15, atualizadoEm: '' });
     expect(c.form.getRawValue()).toEqual({ ticker: 'VALE3', nome: 'Vale ON', setor: 'Mineração', preco: 61.15 });
   });
+
+  it('na edição, sem mudar o preço, não envia preço (mantém o preço vivo do mercado)', async () => {
+    const c = await montar({ id: 1, ticker: 'VALE3', nome: 'Vale ON', setor: 'Mineração', preco: 61.15, atualizadoEm: '' });
+    c.form.controls.nome.setValue('Vale SA');
+    c.salvar();
+    expect(close).toHaveBeenCalledWith({ ticker: 'VALE3', nome: 'Vale SA', setor: 'Mineração' });
+  });
+
+  it('na edição, preço alterado é enviado', async () => {
+    const c = await montar({ id: 1, ticker: 'VALE3', nome: 'Vale ON', setor: null, preco: 61.15, atualizadoEm: '' });
+    c.form.controls.preco.setValue(70);
+    c.salvar();
+    expect(close).toHaveBeenCalledWith(expect.objectContaining({ preco: 70 }));
+  });
 });

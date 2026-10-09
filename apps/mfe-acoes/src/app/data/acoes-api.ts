@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import {
   API_BASE_URL,
   Acao,
+  AtualizaAcao,
   CarteiraResumo,
   CompraResultado,
   Cotacao,
@@ -28,7 +29,7 @@ export class AcoesApi {
     return this.http.post<Acao>(this.base, dados);
   }
 
-  atualizar(id: number, dados: NovaAcao) {
+  atualizar(id: number, dados: AtualizaAcao) {
     return this.http.put<Acao>(`${this.base}/${id}`, dados);
   }
 

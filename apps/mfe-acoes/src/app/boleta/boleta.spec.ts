@@ -129,4 +129,15 @@ describe('Boleta', () => {
     expect(select.value).toBe('2');
     fixture.destroy();
   });
+
+  it('lado da ordem é um par de botões com aria-pressed e o resumo é anunciado (aria-live)', () => {
+    const fixture = montar('VENDER');
+    const el = fixture.nativeElement as HTMLElement;
+    const [comprar, vender] = Array.from(el.querySelectorAll<HTMLButtonElement>('.lados button'));
+    expect(comprar.getAttribute('aria-pressed')).toBe('false');
+    expect(vender.getAttribute('aria-pressed')).toBe('true');
+    expect(el.querySelector('[role="tab"]')).toBeNull();
+    expect(el.querySelector('.resumo')?.getAttribute('aria-live')).toBe('polite');
+    fixture.destroy();
+  });
 });

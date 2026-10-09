@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { Acao, NovaAcao } from '@safra/shared';
+import { Acao, AtualizaAcao, NovaAcao } from '@safra/shared';
 
 @Component({
   selector: 'app-acao-dialog',
@@ -47,7 +47,7 @@ import { Acao, NovaAcao } from '@safra/shared';
 })
 export class AcaoDialog {
   readonly acao = inject<Acao | null>(MAT_DIALOG_DATA);
-  private readonly ref = inject<MatDialogRef<AcaoDialog, NovaAcao>>(MatDialogRef);
+  private readonly ref = inject<MatDialogRef<AcaoDialog, NovaAcao | AtualizaAcao>>(MatDialogRef);
 
   readonly form = inject(NonNullableFormBuilder).group({
     ticker: [this.acao?.ticker ?? '', [Validators.required, Validators.pattern(/^\s*[A-Za-z]{4}\d{1,2}\s*$/)]],
@@ -62,6 +62,8 @@ export class AcaoDialog {
       return;
     }
     const { ticker, nome, setor, preco } = this.form.getRawValue();
-    this.ref.close({ ticker: ticker.trim().toUpperCase(), nome: nome.trim(), setor: setor.trim() || null, preco });
+    const dados = { ticker: ticker.trim().toUpperCase(), nome: nome.trim(), setor: setor.trim() || null };
+    // Na edição, sem mudar o preço, não o envia: a API mantém o preço vivo do mercado.
+    this.ref.close(this.acao && preco === this.acao.preco ? dados : { ...dados, preco });
   }
 }

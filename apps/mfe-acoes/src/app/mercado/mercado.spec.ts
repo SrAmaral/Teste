@@ -23,13 +23,14 @@ describe('MercadoPage', () => {
       providers: [
         provideRouter([]),
         { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap(query) }, queryParamMap: of(convertToParamMap(query)) } },
-        { provide: CotacoesStore, useValue: { lista, status: signal('ao-vivo'), cotacoes: signal(new Map()) } },
         // a boleta (filha) consulta carteiras, posições e trava — irrelevante para estes testes
         { provide: AcoesApi, useValue: { carteiras: () => of([]), posicoes: () => of([]), travar: () => of({ token: 't', acaoId: 1, preco: 10, expiraEm: new Date(Date.now() + 8000).toISOString() }) } },
         { provide: LOCALE_ID, useValue: 'pt-BR' },
         { provide: DEFAULT_CURRENCY_CODE, useValue: 'BRL' },
       ],
-    }).compileComponents();
+    })
+      .overrideComponent(MercadoPage, { set: { providers: [{ provide: CotacoesStore, useValue: { lista, status: signal('ao-vivo'), cotacoes: signal(new Map()) } }] } })
+      .compileComponents();
     const fixture = TestBed.createComponent(MercadoPage);
     fixture.detectChanges();
     return fixture;
