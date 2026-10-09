@@ -1,6 +1,18 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { API_BASE_URL, AtualizaCarteira, Carteira, CarteiraResumo, Compra, NovaCarteira, Posicao } from '@safra/shared';
+import {
+  API_BASE_URL,
+  AtualizaCarteira,
+  Carteira,
+  CarteiraResumo,
+  Compra,
+  Dashboard,
+  FiltroExtrato,
+  Movimentacao,
+  NovaCarteira,
+  Pagina,
+  Posicao,
+} from '@safra/shared';
 
 /** Provido nas rotas do MFE (não em root): quando hospedado, o root injector é o do shell. */
 @Injectable()
@@ -38,5 +50,17 @@ export class CarteirasApi {
 
   depositar(id: number, valor: number) {
     return this.http.post<Carteira>(`${this.base}/${id}/deposito`, { valor });
+  }
+
+  dashboard(carteiraId?: number) {
+    return this.http.get<Dashboard>(`${API_BASE_URL}/dashboard`, { params: carteiraId ? { carteiraId } : {} });
+  }
+
+  extrato(filtro: FiltroExtrato) {
+    let params = new HttpParams();
+    for (const [chave, valor] of Object.entries(filtro)) {
+      if (valor !== undefined && valor !== null && valor !== '') params = params.set(chave, String(valor));
+    }
+    return this.http.get<Pagina<Movimentacao>>(`${API_BASE_URL}/extrato`, { params });
   }
 }

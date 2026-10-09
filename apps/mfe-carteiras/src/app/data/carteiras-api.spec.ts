@@ -51,4 +51,18 @@ describe('CarteirasApi', () => {
     expect(req.request.body).toEqual({ valor: 50 });
     req.flush({});
   });
+
+  it('busca o dashboard consolidado ou de uma carteira', () => {
+    api.dashboard().subscribe();
+    expect(http.expectOne(`${API_BASE_URL}/dashboard`).request.params.keys()).toEqual([]);
+    api.dashboard(3).subscribe();
+    expect(http.expectOne((r) => r.url === `${API_BASE_URL}/dashboard`).request.params.get('carteiraId')).toBe('3');
+  });
+
+  it('busca o extrato só com os filtros definidos', () => {
+    api.extrato({ carteiraId: 2, tipo: 'VENDA', ticker: undefined, pagina: 2 }).subscribe();
+    const req = http.expectOne((r) => r.url === `${API_BASE_URL}/extrato`);
+    expect(req.request.params.keys().sort()).toEqual(['carteiraId', 'pagina', 'tipo']);
+    expect(req.request.params.get('tipo')).toBe('VENDA');
+  });
 });
