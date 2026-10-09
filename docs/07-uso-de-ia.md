@@ -100,7 +100,9 @@ Os pedidos feitos ao agente, na ordem da sessão, em formato de especificação 
 
 ## Fase 2 — mercado ao vivo e redesign
 
-Pedido: evoluir a aplicação nas frentes funcional (tempo real, venda, extrato, dashboard) e visual (design system próprio) (prompt 4 da seção "Prompts utilizados").
+> A aplicação atende ao CRUD, mas está rasa para uma avaliação técnica e com aparência de **Angular Material sem customização**. Evolua em duas frentes:
+> - **Funcional:** cotações em **tempo real** via *streaming* do servidor, **venda** de ações com apuração de resultado pelo custo médio, **extrato** de movimentações com filtros, ordenação e paginação no servidor, e **dashboard** consolidado com indicadores e gráficos. Priorize soluções que demonstrem domínio técnico: controle de concorrência de preço na execução de ordens, reatividade com *signals*, modelagem de dados versionada e cobertura de testes.
+> - **Visual:** *design system* próprio, aderente a produtos do mercado financeiro (hierarquia tipográfica, números tabulares, semântica de alta/baixa, contraste AA e acessibilidade), substituindo o visual padrão do Material.
 
 - **Brainstorming com *visual companion***: a IA mostrou no navegador três direções visuais para o mesmo dashboard (private banking escuro, fintech clara, terminal de trading); a escolha humana foi um **híbrido terminal + fintech**, depois validado com mockups das telas de Dashboard e Mercado + boleta.
 - **Decisões técnicas propostas com alternativas** e aprovadas: SSE, gráficos em SVG próprio, design tokens sobre o Material, migrações versionadas, trava de cotação RFQ.
