@@ -7,6 +7,7 @@ import { rotaNaoEncontrada, tratarErros } from './middleware/error-handler';
 import { AcoesRepository } from './repositories/acoes.repository';
 import { CarteirasRepository } from './repositories/carteiras.repository';
 import { DepositosRepository } from './repositories/depositos.repository';
+import { ExtratoRepository } from './repositories/extrato.repository';
 import { ComprasRepository } from './repositories/compras.repository';
 import { VendasRepository } from './repositories/vendas.repository';
 import { rotasAcoes } from './routes/acoes.routes';
@@ -14,6 +15,7 @@ import { rotasCarteiras } from './routes/carteiras.routes';
 import { rotasCompras } from './routes/compras.routes';
 import { rotasCotacoes } from './routes/cotacoes.routes';
 import { rotasVendas } from './routes/vendas.routes';
+import { rotasExtrato } from './routes/extrato.routes';
 import { AcoesService } from './services/acoes.service';
 import { CarteirasService } from './services/carteiras.service';
 import { ComprasService } from './services/compras.service';
@@ -54,6 +56,7 @@ export function criarApp(db: DB, opcoes: OpcoesApp = {}) {
   app.use('/api/compras', rotasCompras(compras));
   app.use('/api/cotacoes', rotasCotacoes(mercado, travas, acoes));
   app.use('/api/vendas', rotasVendas(vendas));
+  app.use('/api/extrato', rotasExtrato(new ExtratoRepository(db)));
   if (opcoes.pastaWeb) app.use(rotasWeb(opcoes.pastaWeb));
 
   app.use(rotaNaoEncontrada);
