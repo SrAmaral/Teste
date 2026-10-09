@@ -6,3 +6,4 @@ api/data/
 apps/shell/public/docs/
 *.log
 .DS_Store
+.playwright-mcp/

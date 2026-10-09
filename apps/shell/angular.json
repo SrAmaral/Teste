@@ -74,7 +74,14 @@
               "includePaths": [
                 "../../node_modules"
               ]
-            }
+            },
+            "allowedCommonJsDependencies": [
+              "@braintree/sanitize-url",
+              "cytoscape-cose-bilkent",
+              "cytoscape-fcose",
+              "dayjs",
+              "fastdom"
+            ]
           },
           "configurations": {
             "production": {
