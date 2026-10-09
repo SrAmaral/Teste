@@ -3,6 +3,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { criarApp } from './app';
 import { abrirBanco } from './db/connection';
+import { ouvir } from './servidor';
 
 const pastaDados = join(dirname(fileURLToPath(import.meta.url)), '..', 'data');
 mkdirSync(pastaDados, { recursive: true });
@@ -10,6 +11,27 @@ mkdirSync(pastaDados, { recursive: true });
 const db = abrirBanco(process.env.SAFRA_DB ?? join(pastaDados, 'safra.db'), { seed: true });
 const porta = Number(process.env.PORT ?? 3000);
 
-criarApp(db).listen(porta, () => {
+try {
+  const servidor = await ouvir(criarApp(db), porta);
   console.log(`[api] ouvindo em http://localhost:${porta}/api`);
-});
+
+  // Encerramento imediato no Ctrl+C: fecha conexões keep-alive (o shell consulta /health a cada 10 s) e o banco.
+  for (const sinal of ['SIGINT', 'SIGTERM'] as const) {
+    process.once(sinal, () => {
+      servidor.closeAllConnections();
+      servidor.close();
+      db.close();
+      process.exit(0);
+    });
+  }
+} catch (erro) {
+  const codigo = (erro as NodeJS.ErrnoException).code;
+  console.error(
+    codigo === 'EADDRINUSE'
+      ? `[api] porta ${porta} já está em uso — outra instância da API está rodando? Encerre-a e tente de novo.`
+      : '[api] falha ao iniciar o servidor',
+    codigo === 'EADDRINUSE' ? '' : erro,
+  );
+  db.close();
+  process.exit(1);
+}
