@@ -1,0 +1,18 @@
+import { z } from 'zod';
+
+export const acaoSchema = z.object({
+  ticker: z
+    .string()
+    .trim()
+    .toUpperCase()
+    .regex(/^[A-Z]{4}\d{1,2}$/, 'Ticker inválido (ex.: PETR4)'),
+  nome: z.string().trim().min(1, 'Informe o nome').max(80, 'Máximo de 80 caracteres'),
+  setor: z.string().trim().max(40, 'Máximo de 40 caracteres').nullish(),
+  preco: z.number().positive('O preço deve ser maior que zero'),
+});
+
+export const filtroAcoesSchema = z.object({
+  ticker: z.string().trim().optional(),
+});
+
+export type AcaoInput = z.output<typeof acaoSchema>;
