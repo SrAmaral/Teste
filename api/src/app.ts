@@ -16,10 +16,12 @@ import { rotasCompras } from './routes/compras.routes';
 import { rotasCotacoes } from './routes/cotacoes.routes';
 import { rotasVendas } from './routes/vendas.routes';
 import { rotasExtrato } from './routes/extrato.routes';
+import { rotasDashboard } from './routes/dashboard.routes';
 import { AcoesService } from './services/acoes.service';
 import { CarteirasService } from './services/carteiras.service';
 import { ComprasService } from './services/compras.service';
 import { VendasService } from './services/vendas.service';
+import { DashboardService } from './services/dashboard.service';
 import { rotasWeb } from './web';
 
 export const ORIGENS_PERMITIDAS = ['http://localhost:4200', 'http://localhost:4201', 'http://localhost:4202'];
@@ -57,6 +59,7 @@ export function criarApp(db: DB, opcoes: OpcoesApp = {}) {
   app.use('/api/cotacoes', rotasCotacoes(mercado, travas, acoes));
   app.use('/api/vendas', rotasVendas(vendas));
   app.use('/api/extrato', rotasExtrato(new ExtratoRepository(db)));
+  app.use('/api/dashboard', rotasDashboard(new DashboardService(carteirasRepo, comprasRepo, vendasRepo, mercado)));
   if (opcoes.pastaWeb) app.use(rotasWeb(opcoes.pastaWeb));
 
   app.use(rotaNaoEncontrada);
