@@ -5,6 +5,7 @@ import { DEFAULT_CURRENCY_CODE, LOCALE_ID } from '@angular/core';
 import { Routes } from '@angular/router';
 import { apiErrorInterceptor } from './data/api-error.interceptor';
 import { CarteirasApi } from './data/carteiras-api';
+import { CarteiraDetalhe } from './detalhe/carteira-detalhe';
 import { CarteiraForm } from './form/carteira-form';
 import { CarteiraLista } from './lista/carteira-lista';
 
@@ -23,6 +24,7 @@ export const CARTEIRAS_ROUTES: Routes = [
     children: [
       { path: '', component: CarteiraLista },
       { path: 'nova', component: CarteiraForm },
+      { path: ':id', component: CarteiraDetalhe },
       { path: ':id/editar', component: CarteiraForm },
     ],
   },
