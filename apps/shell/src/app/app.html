@@ -1,25 +1,38 @@
-<mat-toolbar class="topo">
-  @if (mobile()) {
-    <button mat-icon-button (click)="sidenav.toggle()" aria-label="Abrir menu"><mat-icon>menu</mat-icon></button>
-  }
-  <span class="marca">Safra Invest Lab</span>
-  <span class="selo">teste técnico</span>
-  <span class="espaco"></span>
-  <app-api-status />
-</mat-toolbar>
-
+<app-ticker-tape />
 <mat-sidenav-container class="container">
   <mat-sidenav #sidenav class="menu" [mode]="mobile() ? 'over' : 'side'" [opened]="!mobile()">
-    <mat-nav-list>
-      @for (item of menu; track item.rota) {
-        <a mat-list-item [routerLink]="item.rota" routerLinkActive #rla="routerLinkActive" [activated]="rla.isActive" (click)="mobile() && sidenav.close()">
-          <mat-icon matListItemIcon>{{ item.icone }}</mat-icon>
-          <span matListItemTitle>{{ item.rotulo }}</span>
-        </a>
+    <div class="marca">
+      <span class="logo" aria-hidden="true"></span>
+      <div>
+        <strong>Safra Invest Lab</strong>
+        <small>teste técnico</small>
+      </div>
+    </div>
+    <nav aria-label="Navegação principal">
+      @for (grupo of menu; track grupo.titulo) {
+        <p class="grupo">{{ grupo.titulo }}</p>
+        @for (item of grupo.itens; track item.rota) {
+          <a
+            class="item"
+            [routerLink]="item.rota"
+            routerLinkActive="ativo"
+            [routerLinkActiveOptions]="{ exact: item.exato ?? false }"
+            (click)="mobile() && sidenav.close()"
+          >
+            <mat-icon aria-hidden="true">{{ item.icone }}</mat-icon>
+            <span>{{ item.rotulo }}</span>
+          </a>
+        }
       }
-    </mat-nav-list>
+    </nav>
+    <div class="rodape"><app-api-status /></div>
   </mat-sidenav>
   <mat-sidenav-content class="conteudo">
-    <router-outlet />
+    @if (mobile()) {
+      <button class="btn btn-icone abrir-menu" type="button" (click)="sidenav.open()" aria-label="Abrir menu">
+        <mat-icon>menu</mat-icon>
+      </button>
+    }
+    <main><router-outlet /></main>
   </mat-sidenav-content>
 </mat-sidenav-container>

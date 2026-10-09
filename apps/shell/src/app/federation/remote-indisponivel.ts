@@ -24,7 +24,7 @@ import { MatIconModule } from '@angular/material/icon';
   `,
   styles: `
     .indisponivel { max-width: 560px; margin: 48px auto; }
-    mat-icon[mat-card-avatar] { color: var(--safra-erro); font-size: 40px; width: 40px; height: 40px; }
+    mat-icon[mat-card-avatar] { color: var(--baixa); font-size: 40px; width: 40px; height: 40px; }
   `,
 })
 export class RemoteIndisponivel {

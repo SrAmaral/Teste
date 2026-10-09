@@ -83,12 +83,12 @@ const arredondar = (valor: number) => Math.round((valor + Number.EPSILON) * 100)
     .resumo { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
     .resumo div { display: flex; flex-direction: column; }
     .resumo span { font-size: 13px; opacity: 0.7; }
-    .resumo strong { font-size: 20px; color: var(--safra-marinho); }
-    .resumo strong.negativo { color: var(--safra-erro); }
-    .alerta { color: var(--safra-erro); margin: 0 0 16px; }
+    .resumo strong { font-size: 20px; color: var(--tx-1); }
+    .resumo strong.negativo { color: var(--baixa); }
+    .alerta { color: var(--baixa); margin: 0 0 16px; }
     .estado { display: flex; justify-content: center; align-items: center; gap: 8px; padding: 48px 0; opacity: 0.8; }
     .dica { font-size: 13px; opacity: 0.7; padding: 0 8px; }
-    .sucesso { max-width: 560px; margin-top: 16px; border-left: 4px solid var(--safra-sucesso); }
+    .sucesso { max-width: 560px; margin-top: 16px; border-left: 4px solid var(--alta); }
   `,
 })
 export class Comprar {

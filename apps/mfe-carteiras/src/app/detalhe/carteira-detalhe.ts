@@ -78,14 +78,14 @@ import { DepositoDialog } from './deposito-dialog';
   styles: `
     .estado { display: flex; justify-content: center; padding: 48px 0; opacity: 0.8; }
     .cabecalho { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
-    .cabecalho h1 { margin: 8px 0 0; color: var(--safra-marinho); }
+    .cabecalho h1 { margin: 8px 0 0; color: var(--tx-1); }
     .cabecalho p { margin: 4px 0 0; opacity: 0.7; }
     .botoes { display: flex; gap: 8px; }
     .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 24px 0; }
     .cards mat-card-content { display: flex; flex-direction: column; gap: 4px; }
     .cards span { font-size: 13px; opacity: 0.7; }
-    .cards strong { font-size: 22px; color: var(--safra-marinho); }
-    h2 { color: var(--safra-marinho); font-size: 18px; margin-top: 32px; }
+    .cards strong { font-size: 22px; color: var(--tx-1); }
+    h2 { color: var(--tx-1); font-size: 18px; margin-top: 32px; }
     .tabela { overflow-x: auto; background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); }
     table { width: 100%; }
     .vazio { opacity: 0.7; }

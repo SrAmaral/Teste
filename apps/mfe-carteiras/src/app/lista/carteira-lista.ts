@@ -65,13 +65,13 @@ import { ConfirmDialog, ConfirmacaoDados } from '../shared/confirm-dialog';
   `,
   styles: `
     .cabecalho { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
-    .cabecalho h1 { margin: 0; color: var(--safra-marinho); }
+    .cabecalho h1 { margin: 0; color: var(--tx-1); }
     .cabecalho p { margin: 4px 0 0; opacity: 0.7; }
     .estado { display: flex; justify-content: center; align-items: center; gap: 8px; padding: 48px 0; opacity: 0.8; }
     .tabela { overflow-x: auto; background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); }
     table { width: 100%; }
     td.acoes { text-align: right; white-space: nowrap; }
-    a { color: var(--safra-marinho); font-weight: 500; }
+    a { color: var(--tx-1); font-weight: 500; }
   `,
 })
 export class CarteiraLista {

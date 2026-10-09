@@ -15,7 +15,7 @@ import { Comprar } from './comprar/comprar';
     </mat-tab-group>
   `,
   styles: `
-    h1 { margin: 0; color: var(--safra-marinho); }
+    h1 { margin: 0; color: var(--tx-1); }
     .subtitulo { margin: 4px 0 16px; opacity: 0.7; }
   `,
 })

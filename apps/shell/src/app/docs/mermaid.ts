@@ -16,7 +16,12 @@ export async function renderizarMermaid(raiz: HTMLElement): Promise<void> {
   });
 
   mermaidPronto ??= import('mermaid').then(({ default: mermaid }) => {
-    mermaid.initialize({ startOnLoad: false, theme: 'neutral', securityLevel: 'strict' });
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'dark',
+      securityLevel: 'strict',
+      themeVariables: { primaryColor: '#121821', primaryBorderColor: '#c9a24b', lineColor: '#8b97a8', primaryTextColor: '#d7dee8', fontFamily: 'Inter' },
+    });
     return mermaid;
   });
   await (await mermaidPronto).run({ nodes: nos });

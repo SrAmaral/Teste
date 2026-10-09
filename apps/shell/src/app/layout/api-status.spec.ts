@@ -24,7 +24,7 @@ describe('ApiStatus', () => {
     await proximoTick();
     TestBed.inject(HttpTestingController).expectOne(`${API_BASE_URL}/health`).flush({ status: 'ok' });
     fixture.detectChanges();
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain('API online');
+    expect((fixture.nativeElement as HTMLElement).textContent).toMatch(/API online · \d+ ms/);
     fixture.destroy();
   });
 

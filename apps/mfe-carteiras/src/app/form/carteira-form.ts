@@ -43,7 +43,7 @@ import { CarteirasApi } from '../data/carteiras-api';
     </form>
   `,
   styles: `
-    h1 { color: var(--safra-marinho); }
+    h1 { color: var(--tx-1); }
     .formulario { display: flex; flex-direction: column; max-width: 520px; background: #fff; padding: 24px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); }
     .botoes { display: flex; justify-content: flex-end; gap: 8px; }
   `,
