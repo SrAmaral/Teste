@@ -11,10 +11,11 @@ import { rotasCompras } from './routes/compras.routes';
 import { AcoesService } from './services/acoes.service';
 import { CarteirasService } from './services/carteiras.service';
 import { ComprasService } from './services/compras.service';
+import { rotasWeb } from './web';
 
 export const ORIGENS_PERMITIDAS = ['http://localhost:4200', 'http://localhost:4201', 'http://localhost:4202'];
 
-export function criarApp(db: DB) {
+export function criarApp(db: DB, opcoes: { pastaWeb?: string } = {}) {
   const app = express();
   app.use(cors({ origin: ORIGENS_PERMITIDAS }));
   app.use(express.json());
@@ -32,6 +33,7 @@ export function criarApp(db: DB) {
   app.use('/api/carteiras', rotasCarteiras(carteiras, compras));
   app.use('/api/acoes', rotasAcoes(acoes));
   app.use('/api/compras', rotasCompras(compras));
+  if (opcoes.pastaWeb) app.use(rotasWeb(opcoes.pastaWeb));
 
   app.use(rotaNaoEncontrada);
   app.use(tratarErros);

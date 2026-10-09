@@ -1,0 +1,11 @@
+**/node_modules
+**/dist
+**/.angular
+**/coverage
+api/data
+apps/shell/public/docs
+.git
+.superpowers
+.playwright-mcp
+*.log
+.DS_Store
