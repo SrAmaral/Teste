@@ -8,6 +8,7 @@ import { CarteirasApi } from './data/carteiras-api';
 import { CotacoesStore } from './ui/cotacoes-store';
 import { CarteiraDetalhe } from './detalhe/carteira-detalhe';
 import { DashboardPage } from './dashboard/dashboard';
+import { ExtratoPage } from './extrato/extrato';
 import { CarteiraForm } from './form/carteira-form';
 import { CarteiraLista } from './lista/carteira-lista';
 
@@ -28,6 +29,7 @@ export const CARTEIRAS_ROUTES: Routes = [
       { path: '', component: DashboardPage },
       { path: 'lista', component: CarteiraLista },
       { path: 'nova', component: CarteiraForm },
+      { path: 'extrato', component: ExtratoPage },
       { path: ':id', component: CarteiraDetalhe },
       { path: ':id/editar', component: CarteiraForm },
     ],
