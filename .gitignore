@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.angular/
+coverage/
+api/data/
+apps/shell/public/docs/
+*.log
+.DS_Store

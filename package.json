@@ -1,0 +1,29 @@
+{
+  "name": "safra-invest-lab",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "api"
+  ],
+  "engines": {
+    "node": ">=22.22.3"
+  },
+  "scripts": {
+    "sync-docs": "node scripts/sync-docs.mjs",
+    "predev": "npm run sync-docs",
+    "dev": "concurrently -k -n api,carteiras,acoes,shell -c blue,green,magenta,yellow \"npm run dev -w api\" \"npm run start -w mfe-carteiras\" \"npm run start -w mfe-acoes\" \"npm run start -w shell\"",
+    "prebuild": "npm run sync-docs",
+    "build": "npm run build -w mfe-carteiras && npm run build -w mfe-acoes && npm run build -w shell",
+    "test": "npm run test -w api && npm run test:ci -w shell && npm run test:ci -w mfe-carteiras && npm run test:ci -w mfe-acoes"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.6"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "lmdb@3.5.6": true,
+    "msgpackr-extract@3.0.4": true,
+    "@parcel/watcher@2.6.0": true,
+    "fsevents@2.3.3": true
+  }
+}
