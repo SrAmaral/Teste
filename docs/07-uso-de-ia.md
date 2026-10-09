@@ -61,3 +61,13 @@ Nenhuma etapa foi dada como pronta sem evidência: suíte de testes completa, bu
 - A IA propõe; a decisão final ficou registrada com o humano em cada etapa.
 - Versões e compatibilidades foram consultadas no registro npm durante a sessão, não presumidas.
 - Simplificações conscientes (dinheiro em `REAL`, sem autenticação) estão em [Decisões técnicas](05-decisoes.md).
+
+## Fase 2 — mercado ao vivo e redesign
+
+Pedido: "o sistema está simples; refine as funcionalidades, deixe-as tecnicamente apelativas e melhore o design, que está muito Angular Material padrão".
+
+- **Brainstorming com *visual companion***: a IA mostrou no navegador três direções visuais para o mesmo dashboard (private banking escuro, fintech clara, terminal de trading); a escolha humana foi um **híbrido terminal + fintech**, depois validado com mockups das telas de Dashboard e Mercado + boleta.
+- **Decisões técnicas propostas com alternativas** e aprovadas: SSE, gráficos em SVG próprio, design tokens sobre o Material, migrações versionadas, trava de cotação RFQ.
+- **Spec** ([Fase 2](superpowers/specs/2026-10-09-safra-fase-2-design.md)) e **plano** ([Plano da fase 2](superpowers/plans/2026-10-09-safra-fase-2.md)) no mesmo formato da fase 1, com *Review Focus* (venda total sem centavo residual, trava reutilizada, parâmetros hostis no extrato, dashboard vazio, queda do stream).
+- Execução tarefa a tarefa com TDD (testes escritos e vistos falhando antes de cada implementação), verificação ponta a ponta no navegador e revisão final independente.
+- Durante a execução, o deploy em container único (Docker/Coolify) foi mesclado no branch por outra sessão; a IA detectou a mudança (`criarApp` com `pastaWeb`, `API_BASE_URL` relativo) e adaptou o plano em vez de sobrescrevê-la — registrado como decisão no ledger de execução.

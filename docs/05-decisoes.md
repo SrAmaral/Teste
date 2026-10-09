@@ -47,3 +47,42 @@ Formato curto de ADR: contexto → decisão → consequência.
 
 ## Angular Material com tema próprio
 - **Decisão:** Material 3 com azul-marinho + dourado via tokens `--mat-sys-*`, inspirado no setor bancário, sem logo ou marca oficial.
+
+## SSE em vez de WebSocket ou polling
+- **Contexto:** as cotações só fluem do servidor para o navegador.
+- **Decisão:** Server-Sent Events (`EventSource`) em `/api/cotacoes/stream`.
+- **Consequência:** nativo no navegador, reconexão automática, sem biblioteca; passa pelo proxy do `ng serve` e pelo container único.
+
+## Mercado simulado (random walk log-normal)
+- **Decisão:** a cada segundo, `preço × e^(σ·Z)` com `Z ~ N(0,1)` (Box–Muller), arredondado a centavos; gerador aleatório e relógio injetáveis.
+- **Consequência:** comportamento realista e **testes determinísticos** (mesma semente → mesma série). O histórico intraday fica em memória: o "pregão" reinicia junto com a API.
+
+## Trava de cotação (RFQ) de 8 s
+- **Contexto:** com preço mudando a cada segundo, o usuário poderia pagar diferente do que viu.
+- **Decisão:** `POST /cotacoes/:id/trava` devolve um token de uso único válido por 8 s; a ordem com token executa no preço travado, senão `409 COTACAO_EXPIRADA` e a boleta renova a trava.
+- **Consequência:** o padrão de mesa de operações (*request for quote*), com contagem regressiva visível na boleta.
+
+## Migrações versionadas
+- **Decisão:** lista ordenada de migrações aplicadas em transação conforme `PRAGMA user_version`.
+- **Consequência:** bancos da fase 1 evoluem sem perda de dados; a migração v1 usa `IF NOT EXISTS` para adotar bancos criados antes do versionamento.
+
+## Custo médio
+- **Decisão:** o método de custo médio (padrão no Brasil) para posições e resultado realizado; venda total baixa o custo restante inteiro.
+- **Consequência:** preço médio não muda em vendas parciais e não sobram "posições fantasma" de centavos.
+
+## Extrato lido direto do repositório
+- **Decisão:** `UNION ALL` de depósitos, compras e vendas, com filtros parametrizados, ordenação em lista branca e `LIMIT/OFFSET`; sem camada de service por ser só leitura.
+- **Consequência:** paginação e filtros no servidor; parâmetros inválidos viram `400`, nunca SQL dinâmico.
+
+## Design tokens próprios + Material como motor
+- **Decisão:** `libs/ui-tokens/_tokens.scss` define o tema escuro (superfícies, texto, alta/baixa, dourado, tipografia Inter + JetBrains Mono tabular) e sobrescreve os tokens `--mat-sys-*`; dialog, select, menu e snackbar continuam do Material pela acessibilidade.
+- **Consequência:** visual de produto financeiro sem reescrever componentes acessíveis; tokens compartilhados por serem só estilo (sem runtime).
+
+## Gráficos em SVG próprio
+- **Decisão:** sparkline, área com crosshair e donut desenhados em SVG, com a geometria em funções puras testadas.
+- **Consequência:** zero dependência, 100% no tema, bundle pequeno.
+
+## Duplicação consciente entre MFEs
+- **Decisão:** `CotacoesStore`, `FlashDirective` e os componentes de gráfico existem em cada app que os usa.
+- **Consequência:** cada MFE continua implantável sozinho; numa empresa, iriam para uma biblioteca de design system versionada.
+

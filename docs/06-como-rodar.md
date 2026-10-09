@@ -31,6 +31,10 @@ npm test          # API (vitest + supertest) + 3 apps Angular (vitest)
 npm run build     # build de produção dos 3 front-ends
 ```
 
+## Mercado ao vivo
+
+As cotações começam a variar assim que a API sobe (um tick por segundo). O histórico dos gráficos é do pregão atual: reinicia quando a API reinicia.
+
 ## Testar a resiliência
 
 Com tudo rodando, pare só o `mfe-acoes` e recarregue http://localhost:4200/acoes: aparece **Módulo indisponível**, e Home e Carteiras continuam funcionando.

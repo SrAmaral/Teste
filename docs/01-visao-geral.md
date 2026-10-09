@@ -4,9 +4,12 @@ Aplicação de teste técnico que simula um pequeno domínio de investimentos em
 
 ## O que dá para fazer
 
-- **Carteiras** — cadastrar, editar, excluir, depositar saldo e acompanhar posições e histórico de compras.
-- **Ações** — manter o catálogo de ações (ticker, nome, setor, preço) e **comprar** ações para uma carteira.
-- **Home** — esta documentação, renderizada a partir dos arquivos `docs/*.md` do repositório.
+- **Dashboard** — patrimônio, caixa, resultado realizado e não realizado, evolução no pregão e alocação por setor, tudo recalculado ao vivo.
+- **Mercado ao vivo** — cotações simuladas transmitidas por SSE, com variação do dia, mini gráfico e boleta de compra/venda com **trava de preço de 8 s**.
+- **Carteiras** — cadastro, depósitos e detalhe com posições reprecificadas a cada tick (custo médio).
+- **Extrato** — depósitos, compras e vendas com filtros, ordenação e paginação no servidor.
+- **Home de documentação** — estas páginas.
+- **Catálogo** — cadastro das ações negociáveis (ticker, nome, setor, preço).
 
 ## Peças
 
@@ -22,7 +25,11 @@ Aplicação de teste técnico que simula um pequeno domínio de investimentos em
 - MFEs carregados **em runtime** via Native Federation — o shell não conhece o código deles em build.
 - Cada MFE **roda sozinho** na própria porta.
 - Se um MFE cair, o shell mostra "Módulo indisponível" e o resto continua funcionando.
-- MFEs se comunicam por **evento de navegador** (`safra:compra-realizada`), sem dependência direta.
-- Regras de negócio (saldo, integridade, validação) ficam na API, com transação SQLite na compra.
+- MFEs se comunicam por **evento de navegador** (`safra:ordem-executada`) e por **deep link** (`/acoes?ticker=…&lado=VENDER`), sem dependência direta.
+- Regras de negócio (saldo, posição, custo médio, validação) ficam na API, com transação SQLite em cada ordem.
+- **Tempo real via SSE + signals**: um mercado simulado (random walk log-normal) atualiza preços a cada segundo.
+- **Trava de cotação (RFQ)**: o preço visto vale por 8 s, com token de uso único.
+- **Migrações versionadas** do SQLite (`PRAGMA user_version`).
+- **Design system próprio** (tokens escuros) sobre o Angular Material e gráficos em SVG próprio.
 
 Continue em [Arquitetura](02-arquitetura.md).

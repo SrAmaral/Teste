@@ -1,6 +1,11 @@
 # Safra Invest Lab
 
-Teste técnico: **micro front-ends Angular** (Native Federation) com shell, MFE de Carteiras, MFE de Ações e API Express + SQLite. A Home da aplicação é a própria documentação do projeto.
+Teste técnico: **micro front-ends Angular** (Native Federation) com shell, MFE de Carteiras e MFE de Ações, sobre uma API Express + SQLite.
+
+- **Mercado ao vivo:** cotações simuladas via SSE, boleta de compra/venda com trava de preço (RFQ) de 8 s.
+- **Carteiras:** dashboard com KPIs e gráficos que reagem a cada tick, posições pelo custo médio, extrato paginado no servidor.
+- **Visual:** design system escuro próprio (tokens) sobre o Angular Material, gráficos em SVG.
+- **Documentação:** é a própria Home da aplicação (`/docs`), incluindo como a IA foi usada.
 
 ## Rodar
 

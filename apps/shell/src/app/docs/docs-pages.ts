@@ -14,6 +14,8 @@ export const PAGINAS_DOC: PaginaDoc[] = [
   { slug: 'uso-de-ia', titulo: 'Como a IA foi usada', arquivo: '07-uso-de-ia.md' },
   { slug: 'spec', titulo: 'Spec de design', arquivo: 'superpowers/specs/2026-10-09-safra-mfe-investimentos-design.md' },
   { slug: 'plano', titulo: 'Plano de implementação', arquivo: 'superpowers/plans/2026-10-09-safra-mfe-investimentos.md' },
+  { slug: 'spec-fase-2', titulo: 'Spec — fase 2', arquivo: 'superpowers/specs/2026-10-09-safra-fase-2-design.md' },
+  { slug: 'plano-fase-2', titulo: 'Plano — fase 2', arquivo: 'superpowers/plans/2026-10-09-safra-fase-2.md' },
 ];
 
 const nomeDoArquivo = (caminho: string) => caminho.split('#')[0].split('/').pop() ?? '';
